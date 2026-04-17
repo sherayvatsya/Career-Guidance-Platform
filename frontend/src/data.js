@@ -1,0 +1,126 @@
+﻿export const QUESTIONS = [
+  { id:1, text:"How do you prefer to solve problems?", options:["Through logical analysis and code","Through design and visual thinking","Through talking to people and leading","Through research and writing"] },
+  { id:2, text:"What excites you most about your future work?", options:["Building systems that scale globally","Creating beautiful user experiences","Making a social impact","Discovering new scientific knowledge"] },
+  { id:3, text:"How comfortable are you with risk and uncertainty?", options:["I thrive in high-risk, high-reward environments","I prefer calculated risks with clear plans","I like stable environments with steady growth","I'm okay with moderate uncertainty if there's structure"] },
+  { id:4, text:"Which of these would you spend a weekend doing?", options:["Building a side project or app","Sketching UI designs or art","Organizing a community event","Reading a research paper or book"] },
+  { id:5, text:"What's your relationship with math?", options:["I genuinely enjoy complex mathematics","I can handle it when needed, not my passion","I prefer applied math over pure theory","I'd rather avoid heavy math entirely"] },
+  { id:6, text:"How do you prefer to work?", options:["Solo deep-focus work","Small collaborative teams","Large team environments","Mix of remote and in-person freelance"] },
+  { id:7, text:"What matters most in your career?", options:["Salary & financial growth","Creativity & self-expression","Work-life balance","Societal or environmental impact"] },
+  { id:8, text:"Which industry fascinates you the most?", options:["Technology & AI","Healthcare & Biotech","Finance & Fintech","Media, Arts & Entertainment"] },
+  { id:9, text:"What's your ideal learning environment?", options:["Self-taught through projects & docs","Structured courses & certifications","Mentorship and on-the-job learning","Academic research & degrees"] },
+  { id:10, text:"Where do you see yourself in 10 years?", options:["Leading a tech startup as CTO/CEO","Running a design studio","Managing large teams at a corporation","Contributing to academic or government research"] },
+];
+
+export const CAREERS = [
+  { id:"ai-ml", name:"AI/ML Engineer", icon:"ðŸ¤–", match:94, salary:"$130kâ€“$200k", growth:"Very High", difficulty:"Hard",
+    demand:97, skills:["Python","TensorFlow","Math","Statistics","Cloud"],
+    desc:"Design and train machine learning models that power intelligent systems.",
+    tags:["tech","ai","future"], color:"#6c63ff" },
+  { id:"fullstack", name:"Full Stack Developer", icon:"ðŸ’»", match:89, salary:"$95kâ€“$160k", growth:"High", difficulty:"Medium",
+    demand:88, skills:["React","Node.js","SQL","Docker","APIs"],
+    desc:"Build end-to-end web applications from UI to infrastructure.",
+    tags:["tech","web","versatile"], color:"#00d4aa" },
+  { id:"data-sci", name:"Data Scientist", icon:"ðŸ“Š", match:85, salary:"$110kâ€“$175k", growth:"High", difficulty:"Hard",
+    demand:90, skills:["Python","Statistics","SQL","Visualization","ML"],
+    desc:"Extract insights from data to guide business strategy and innovation.",
+    tags:["data","analytics","ai"], color:"#f5c842" },
+  { id:"ux-design", name:"UX/Product Designer", icon:"ðŸŽ¨", match:78, salary:"$85kâ€“$145k", growth:"Medium-High", difficulty:"Medium",
+    demand:75, skills:["Figma","Research","Prototyping","Psychology","Storytelling"],
+    desc:"Craft user experiences that feel intuitive, beautiful, and impactful.",
+    tags:["design","creative","user"], color:"#ff6b6b" },
+  { id:"cybersec", name:"Cybersecurity Analyst", icon:"ðŸ›¡ï¸", match:82, salary:"$100kâ€“$170k", growth:"Very High", difficulty:"Hard",
+    demand:95, skills:["Networking","Pentesting","SIEM","Cloud Security","Python"],
+    desc:"Protect organizations from digital threats and data breaches.",
+    tags:["security","tech","critical"], color:"#a78bfa" },
+  { id:"product-mgr", name:"Product Manager", icon:"ðŸš€", match:74, salary:"$110kâ€“$180k", growth:"High", difficulty:"Medium",
+    demand:80, skills:["Strategy","Roadmapping","Data","Communication","Empathy"],
+    desc:"Bridge business, design, and engineering to ship products users love.",
+    tags:["leadership","strategy","impact"], color:"#fb923c" },
+  { id:"blockchain", name:"Blockchain Developer", icon:"â›“ï¸", match:71, salary:"$120kâ€“$200k", growth:"Very High", difficulty:"Very Hard",
+    demand:82, skills:["Solidity","Web3.js","Cryptography","Rust","DeFi"],
+    desc:"Build decentralized applications and smart contracts on blockchain networks.",
+    tags:["crypto","web3","emerging"], color:"#34d399" },
+  { id:"bioinformatics", name:"Bioinformatics Engineer", icon:"ðŸ§¬", match:66, salary:"$90kâ€“$155k", growth:"High", difficulty:"Very Hard",
+    demand:78, skills:["Python","R","Biology","Statistics","Genomics"],
+    desc:"Analyze biological data to drive breakthroughs in medicine and genomics.",
+    tags:["biotech","research","science"], color:"#f472b6" },
+];
+
+export const ROADMAPS = {
+  "ai-ml": {
+    career:"AI/ML Engineer",
+    phases:[
+      { phase:"Phase 1", title:"Foundations", months:"Months 1â€“3", status:"done",
+        desc:"Master Python fundamentals, linear algebra, calculus, and probability theory. Complete NumPy, Pandas, and Matplotlib.",
+        resources:["CS50 Python","Khan Academy Math","Fast.ai Intro"] },
+      { phase:"Phase 2", title:"Core Machine Learning", months:"Months 4â€“6", status:"active",
+        desc:"Study supervised/unsupervised learning. Implement models from scratch. Complete Andrew Ng's ML Specialization.",
+        resources:["Coursera ML Spec","Scikit-learn Docs","Kaggle Competitions"] },
+      { phase:"Phase 3", title:"Deep Learning & NLP", months:"Months 7â€“10", status:"",
+        desc:"Deep neural networks, CNNs, RNNs, Transformers. Build NLP pipelines and image classifiers.",
+        resources:["Deep Learning.AI","Hugging Face Course","PyTorch Tutorials"] },
+      { phase:"Phase 4", title:"MLOps & Deployment", months:"Months 11â€“13", status:"",
+        desc:"Learn model deployment, CI/CD pipelines for ML, Docker, and cloud platforms (AWS SageMaker / GCP Vertex AI).",
+        resources:["MLflow","Docker Docs","AWS Free Tier"] },
+      { phase:"Phase 5", title:"Specialization & Portfolio", months:"Months 14â€“18", status:"",
+        desc:"Choose your lane: Computer Vision, NLP, RL, or Generative AI. Build 3 portfolio projects. Contribute to open-source.",
+        resources:["arXiv Papers","GitHub","Hugging Face Hub"] },
+    ]
+  },
+  "fullstack": {
+    career:"Full Stack Developer",
+    phases:[
+      { phase:"Phase 1", title:"HTML/CSS/JS Basics", months:"Months 1â€“2", status:"done",
+        desc:"Build 5 static websites. Learn responsive design, Flexbox, Grid, and JavaScript ES6+.",
+        resources:["The Odin Project","MDN Web Docs","CSS Tricks"] },
+      { phase:"Phase 2", title:"React & Frontend", months:"Months 3â€“5", status:"active",
+        desc:"Master React, state management, hooks, and component architecture. Build dynamic SPAs.",
+        resources:["React Docs","Scrimba React","Frontend Masters"] },
+      { phase:"Phase 3", title:"Backend & APIs", months:"Months 6â€“8", status:"",
+        desc:"Node.js, Express, REST APIs, authentication with JWT, and SQL/NoSQL databases.",
+        resources:["Node.js Docs","MongoDB University","Postman Academy"] },
+      { phase:"Phase 4", title:"DevOps & Cloud", months:"Months 9â€“11", status:"",
+        desc:"Deploy apps on Vercel, AWS, or GCP. Learn Docker, CI/CD pipelines, and web security basics.",
+        resources:["AWS Free Tier","GitHub Actions","Docker Docs"] },
+      { phase:"Phase 5", title:"Full Stack Projects", months:"Months 12â€“15", status:"",
+        desc:"Build 3 full-stack projects: SaaS app, real-time app with WebSockets, and a mobile-first PWA.",
+        resources:["Socket.io","Stripe Docs","PWA Guide"] },
+    ]
+  }
+};
+
+export const TRENDS_DATA = [
+  { name:"Artificial Intelligence", icon:"ðŸ¤–", growth:"+42%", type:"up", jobs:850000 },
+  { name:"Cybersecurity", icon:"ðŸ›¡ï¸", growth:"+31%", type:"up", jobs:560000 },
+  { name:"Cloud Computing", icon:"â˜ï¸", growth:"+28%", type:"up", jobs:720000 },
+  { name:"Data Science", icon:"ðŸ“Š", growth:"+25%", type:"up", jobs:640000 },
+  { name:"Blockchain", icon:"â›“ï¸", growth:"+38%", type:"up", jobs:290000 },
+  { name:"UX Design", icon:"ðŸŽ¨", growth:"+18%", type:"mid", jobs:380000 },
+  { name:"Bioinformatics", icon:"ðŸ§¬", growth:"+22%", type:"up", jobs:180000 },
+  { name:"AR/VR Dev", icon:"ðŸ¥½", growth:"+45%", type:"up", jobs:220000 },
+];
+
+export const JOURNEYS = [
+  { name:"Aisha Raza", avatar:"ðŸ‘©â€ðŸ’»", role:"AI Engineer @ Google", from:"Mechanical Engg Graduate",
+    story:"I spent 2 years in mechanical engineering before discovering AI. I self-taught Python, completed 3 Coursera specializations, built a portfolio of 5 ML projects, and landed my dream job through GitHub networking.",
+    milestones:["Switched field at 22 after failing at a startup","Completed Andrew Ng's ML course in 6 weeks","First internship at a local AI startup","Published open-source sentiment analysis tool","Hired by Google via LinkedIn cold outreach"] },
+  { name:"Marcus Chen", avatar:"ðŸ‘¨â€ðŸŽ¨", role:"Senior Product Designer @ Stripe",
+    from:"Self-taught Designer", story:"No design degree. Just passion. I taught myself Figma, built a Behance portfolio of passion projects, and applied relentlessly. Stripe hired me for my unique perspective as a 'user first' thinker.",
+    milestones:["Started with YouTube tutorials on UX principles","Redesigned 3 popular apps as case studies","Landed first freelance project via Twitter","Joined a Series A startup as lead designer","Promoted to Senior Designer in 18 months at Stripe"] },
+  { name:"Priya Nair", avatar:"ðŸ‘©â€ðŸ”¬", role:"Cybersecurity Analyst @ HSBC",
+    from:"Computer Science Student", story:"I earned two CompTIA certs (Security+ and CySA+) during final year of college, participated in 12 CTF competitions, and joined HSBC's graduate security program straight from campus.",
+    milestones:["Discovered cybersecurity through a university CTF event","Earned CompTIA Security+ in semester 6","Built a home lab with Kali Linux and practice targets","Won regional CTF competition","Joined HSBC's security graduate intake program"] },
+];
+
+export const COLLEGES_DB = [
+  { name:"MIT", location:"Cambridge, USA", cutoff:"Top 1%", fees:"$57k/yr", programs:["CS","AI","Data Sci"], mode:"On-campus", type:"research" },
+  { name:"IIT Bombay", location:"Mumbai, India", cutoff:"JEE Top 0.1%", fees:"â‚¹2.5L/yr", programs:["CS","AI","Cyber"], mode:"On-campus", type:"research" },
+  { name:"Georgia Tech", location:"Atlanta, USA", cutoff:"Top 5%", fees:"$13k/yr (in-state)", programs:["CS","Cybersec","ML"], mode:"On-campus / Online", type:"engineering" },
+  { name:"Coursera / DeepLearning.AI", location:"Online", cutoff:"None", fees:"$49/mo", programs:["AI","ML","Data Sci"], mode:"Online", type:"online" },
+  { name:"University of Edinburgh", location:"Scotland, UK", cutoff:"Top 10%", fees:"Â£9.25k/yr", programs:["CS","AI","Robotics"], mode:"On-campus", type:"research" },
+  { name:"upGrad + BITS Pilani", location:"India (Online)", cutoff:"Graduation required", fees:"â‚¹3.5L total", programs:["Data Sci","ML","FullStack"], mode:"Online", type:"online" },
+  { name:"Carnegie Mellon", location:"Pittsburgh, USA", cutoff:"Top 2%", fees:"$58k/yr", programs:["CS","ML","HCI"], mode:"On-campus", type:"research" },
+  { name:"Udacity Nanodegrees", location:"Online", cutoff:"None", fees:"$249/mo", programs:["AI","Cloud","Self-Driving"], mode:"Online", type:"online" },
+];
+
+
