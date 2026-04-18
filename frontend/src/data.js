@@ -9,6 +9,8 @@
   { id:8, text:"Which industry fascinates you the most?", options:["Technology & AI","Healthcare & Biotech","Finance & Fintech","Media, Arts & Entertainment"] },
   { id:9, text:"What's your ideal learning environment?", options:["Self-taught through projects & docs","Structured courses & certifications","Mentorship and on-the-job learning","Academic research & degrees"] },
   { id:10, text:"Where do you see yourself in 10 years?", options:["Leading a tech startup as CTO/CEO","Running a design studio","Managing large teams at a corporation","Contributing to academic or government research"] },
+  { id:11, text:"Which environment makes you happiest at work?", options:["Fast-paced startup","Design-led product teams","Mission-driven organizations","Research labs and labs"] },
+  { id:12, text:"What kind of career feedback energizes you?", options:["Code reviews and technical challenge","User feedback and creative critiques","Business impact and growth metrics","Academic recognition and publications"] },
 ];
 
 export const CAREERS = [
@@ -44,6 +46,14 @@ export const CAREERS = [
     demand:78, skills:["Python","R","Biology","Statistics","Genomics"],
     desc:"Analyze biological data to drive breakthroughs in medicine and genomics.",
     tags:["biotech","research","science"], color:"#f472b6" },
+  { id:"devops", name:"DevOps/SRE Engineer", icon:"🛠️", match:80, salary:"$105kâ€“$170k", growth:"High", difficulty:"Hard",
+    demand:89, skills:["Linux","Kubernetes","CI/CD","Cloud","Terraform"],
+    desc:"Build reliable cloud infrastructure, automate deployments, and keep services running smoothly.",
+    tags:["cloud","ops","infra"], color:"#22c55e" },
+  { id:"digital-marketing", name:"Digital Marketing Strategist", icon:"📣", match:70, salary:"$75kâ€“$130k", growth:"Medium-High", difficulty:"Medium",
+    demand:72, skills:["SEO","Analytics","Content","Growth","Social Media"],
+    desc:"Drive user acquisition and growth with data-led campaigns and brand storytelling.",
+    tags:["marketing","growth","creative"], color:"#f97316" },
 ];
 
 export const ROADMAPS = {
@@ -98,6 +108,8 @@ export const TRENDS_DATA = [
   { name:"UX Design", icon:"ðŸŽ¨", growth:"+18%", type:"mid", jobs:380000 },
   { name:"Bioinformatics", icon:"ðŸ§¬", growth:"+22%", type:"up", jobs:180000 },
   { name:"AR/VR Dev", icon:"ðŸ¥½", growth:"+45%", type:"up", jobs:220000 },
+  { name:"DevOps / Cloud Engineering", icon:"🛠️", growth:"+33%", type:"up", jobs:450000 },
+  { name:"Digital Marketing", icon:"📣", growth:"+27%", type:"up", jobs:390000 },
 ];
 
 export const JOURNEYS = [
@@ -110,6 +122,12 @@ export const JOURNEYS = [
   { name:"Priya Nair", avatar:"ðŸ‘©â€ðŸ”¬", role:"Cybersecurity Analyst @ HSBC",
     from:"Computer Science Student", story:"I earned two CompTIA certs (Security+ and CySA+) during final year of college, participated in 12 CTF competitions, and joined HSBC's graduate security program straight from campus.",
     milestones:["Discovered cybersecurity through a university CTF event","Earned CompTIA Security+ in semester 6","Built a home lab with Kali Linux and practice targets","Won regional CTF competition","Joined HSBC's security graduate intake program"] },
+  { name:"Nina Patel", avatar:"👩‍💻", role:"DevOps Engineer @ AWS", from:"IT Support Specialist",
+    story:"I moved from desktop support to DevOps by learning Linux, Docker, Kubernetes, and AWS through hands-on labs. Within a year, I joined AWS and now own CI/CD pipelines for large-scale services.",
+    milestones:["Started with Linux training while working IT support","Built a Kubernetes cluster for a side project","Earned AWS DevOps certification","Implemented deployment automation at a startup","Joined AWS as a DevOps engineer"] },
+  { name:"Leo Martin", avatar:"👨‍💼", role:"Growth Marketing Lead @ Shopify", from:"Content Creator",
+    story:"I combined my passion for storytelling and analytics to move into growth marketing. I mastered SEO, ads, and product messaging, then led campaigns that doubled trial signups.",
+    milestones:["Grew a blog audience to 50k monthly readers","Learned Google Analytics and A/B testing","Ran ad campaigns with 38% ROI","Joined Shopify marketing team","Scaled user acquisition funnels across 3 products"] },
 ];
 
 export const COLLEGES_DB = [
@@ -120,7 +138,14 @@ export const COLLEGES_DB = [
   { name:"University of Edinburgh", location:"Scotland, UK", cutoff:"Top 10%", fees:"Â£9.25k/yr", programs:["CS","AI","Robotics"], mode:"On-campus", type:"research" },
   { name:"upGrad + BITS Pilani", location:"India (Online)", cutoff:"Graduation required", fees:"â‚¹3.5L total", programs:["Data Sci","ML","FullStack"], mode:"Online", type:"online" },
   { name:"Carnegie Mellon", location:"Pittsburgh, USA", cutoff:"Top 2%", fees:"$58k/yr", programs:["CS","ML","HCI"], mode:"On-campus", type:"research" },
+  { name:"ETH Zurich", location:"Zurich, Switzerland", cutoff:"Top 5%", fees:"CHF 1,500/yr", programs:["CS","Robotics","Data Sci"], mode:"On-campus", type:"research" },
+  { name:"National University of Singapore", location:"Singapore", cutoff:"Top 1%", fees:"S$20k/yr", programs:["CS","AI","Cybersecurity"], mode:"On-campus", type:"research" },
+  { name:"Purdue University", location:"West Lafayette, USA", cutoff:"Top 8%", fees:"$28k/yr", programs:["CS","Cloud","Systems"], mode:"On-campus", type:"engineering" },
   { name:"Udacity Nanodegrees", location:"Online", cutoff:"None", fees:"$249/mo", programs:["AI","Cloud","Self-Driving"], mode:"Online", type:"online" },
+  { name:"University of Toronto", location:"Toronto, Canada", cutoff:"Top 10%", fees:"CA$60k/yr", programs:["CS","AI","Data Sci"], mode:"On-campus", type:"research" },
+  { name:"Springboard", location:"Online", cutoff:"None", fees:"$39/mo", programs:["AI","Data Sci","UX"], mode:"Online", type:"online" },
+  { name:"Olin College", location:"Needham, USA", cutoff:"Top 1%", fees:"$58k/yr", programs:["Engineering","Design","Robotics"], mode:"On-campus", type:"innovation" },
+  { name:"General Assembly", location:"Online / Hybrid", cutoff:"None", fees:"$13k/course", programs:["Data Sci","UX","Web Dev"], mode:"Online", type:"bootcamp" },
 ];
 
 

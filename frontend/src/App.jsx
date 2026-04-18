@@ -554,8 +554,16 @@ function JourneysPage() {
 function CollegePage() {
   const [type, setType] = useState("all");
   const [budget, setBudget] = useState("all");
+  const [region, setRegion] = useState("all");
+  const [program, setProgram] = useState("all");
   const filtered = COLLEGES_DB.filter(c=>{
     if(type!=="all" && c.type!==type) return false;
+    if(region==="usa" && !c.location.includes("USA")) return false;
+    if(region==="india" && !c.location.includes("India")) return false;
+    if(region==="europe" && !/(Switzerland|Scotland|UK)/.test(c.location)) return false;
+    if(region==="canada" && !c.location.includes("Canada")) return false;
+    if(region==="online" && c.mode!=="Online") return false;
+    if(program!=="all" && !c.programs.some(p=>p.toLowerCase().includes(program))) return false;
     if(budget==="low" && !c.fees.includes("â‚¹") && !c.fees.includes("/mo")) return false;
     if(budget==="high" && !c.fees.includes("$5")) return false;
     return true;
@@ -567,7 +575,7 @@ function CollegePage() {
         Find Your Learning Institution
       </h2>
       <p style={{color:"var(--muted)",fontSize:".9rem",marginBottom:24}}>
-        Filter by type, budget, and region to find the right fit.
+        Filter by type, budget, region, and program focus to find the right fit.
       </p>
       <div className="college-filter">
         <div style={{fontFamily:"var(--font-display)",fontWeight:700,marginBottom:4}}>ðŸ” Filter Options</div>
@@ -579,6 +587,8 @@ function CollegePage() {
               <option value="research">Research Universities</option>
               <option value="engineering">Engineering Schools</option>
               <option value="online">Online Platforms</option>
+              <option value="innovation">Innovation Colleges</option>
+              <option value="bootcamp">Bootcamps</option>
             </select>
           </div>
           <div className="filter-group">
@@ -587,6 +597,29 @@ function CollegePage() {
               <option value="all">Any Budget</option>
               <option value="low">Low Cost / India</option>
               <option value="high">Premium</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Region</label>
+            <select className="filter-select" value={region} onChange={e=>setRegion(e.target.value)}>
+              <option value="all">All Regions</option>
+              <option value="usa">USA</option>
+              <option value="india">India</option>
+              <option value="europe">Europe</option>
+              <option value="canada">Canada</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Program Focus</label>
+            <select className="filter-select" value={program} onChange={e=>setProgram(e.target.value)}>
+              <option value="all">Any Program</option>
+              <option value="cs">Computer Science</option>
+              <option value="ai">AI / ML</option>
+              <option value="data">Data Science</option>
+              <option value="ux">UX / Design</option>
+              <option value="cloud">Cloud / DevOps</option>
+              <option value="cyber">Cybersecurity</option>
             </select>
           </div>
         </div>
