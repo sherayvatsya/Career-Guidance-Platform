@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NexusAI Career Advisor</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
     * {
       margin: 0;
@@ -25,9 +25,9 @@
       --gold: #f5c842;
       --text: #e8eaf0;
       --muted: #6b7280;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Manrope', sans-serif;
+      --font-mono: 'Space Mono', monospace;
     }
 
     body {
@@ -1530,7 +1530,8 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
     const STORAGE_SESSION_KEY = "nexusai_auth_session_v1";
-    const API_BASE = window.NEXUS_API_BASE || "http://localhost:4000";
+    const LEGACY_STORAGE_SESSION_KEY = "nexusai_auth_session";
+    const API_BASE = window.NEXUS_API_BASE || "";
     const DEFAULT_AI_MESSAGE = { role: "ai", text: "👋 Hey! I'm **NexusAI**, your personal career mentor. I can help with career choices, learning roadmaps, interview prep, salary negotiation, skill gaps — anything career-related. What's on your mind?", time: "Just now" };
 
     const safeJsonParse = (text, fallback) => {
@@ -1538,10 +1539,14 @@
     };
     const normalizeUsername = (value) => value.trim().toLowerCase();
     const apiFetch = async (path, { method = "GET", token, body } = {}) => {
-      const response = await fetch(`${API_BASE}${path}`, {
+      const endpoint = API_BASE ? `${API_BASE}${path}` : path;
+      const response = await fetch(endpoint, {
         method,
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+          Pragma: "no-cache",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: body ? JSON.stringify(body) : undefined,
@@ -1582,7 +1587,7 @@
       };
     };
 
-    function LoginPage({ onAuthSuccess }) {
+    function LoginPage({ onAuthStart, onAuthSuccess }) {
       const [mode, setMode] = useState("login");
       const [name, setName] = useState("");
       const [username, setUsername] = useState("");
@@ -1611,12 +1616,14 @@
           }
         }
         setLoading(true);
+        onAuthStart?.();
         try {
           const auth = mode === "signup"
             ? await signupUser({ name: cleanName, username: cleanUsername, password })
             : await loginUser({ username: cleanUsername, password });
 
-          localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify({ token: auth.token }));
+          localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify({ token: auth.token, userId: auth.user?.id || null }));
+          localStorage.removeItem(LEGACY_STORAGE_SESSION_KEY);
           const profileRes = await getProfileData(auth.token).catch(() => ({ profile: null }));
           onAuthSuccess({ token: auth.token, user: auth.user, profile: profileRes.profile || null });
         } catch (err) {
@@ -1656,32 +1663,105 @@
     }
 
     const QUESTIONS = [
-      { id: 1, text: "How do you prefer to solve problems?", options: ["Through logical analysis and code", "Through design and visual thinking", "Through talking to people and leading", "Through research and writing"] },
-      { id: 2, text: "What excites you most about your future work?", options: ["Building systems that scale globally", "Creating beautiful user experiences", "Making a social impact", "Discovering new scientific knowledge"] },
-      { id: 3, text: "How comfortable are you with risk and uncertainty?", options: ["I thrive in high-risk, high-reward environments", "I prefer calculated risks with clear plans", "I like stable environments with steady growth", "I'm okay with moderate uncertainty if there's structure"] },
-      { id: 4, text: "Which of these would you spend a weekend doing?", options: ["Building a side project or app", "Sketching UI designs or art", "Organizing a community event", "Reading a research paper or book"] },
-      { id: 5, text: "What's your relationship with math?", options: ["I genuinely enjoy complex mathematics", "I can handle it when needed, not my passion", "I prefer applied math over pure theory", "I'd rather avoid heavy math entirely"] },
-      { id: 6, text: "How do you prefer to work?", options: ["Solo deep-focus work", "Small collaborative teams", "Large team environments", "Mix of remote and in-person freelance"] },
-      { id: 7, text: "What matters most in your career?", options: ["Salary & financial growth", "Creativity & self-expression", "Work-life balance", "Societal or environmental impact"] },
-      { id: 8, text: "Which industry fascinates you the most?", options: ["Technology & AI", "Healthcare & Biotech", "Finance & Fintech", "Media, Arts & Entertainment"] },
-      { id: 9, text: "What's your ideal learning environment?", options: ["Self-taught through projects & docs", "Structured courses & certifications", "Mentorship and on-the-job learning", "Academic research & degrees"] },
-      { id: 10, text: "Where do you see yourself in 10 years?", options: ["Leading a tech startup as CTO/CEO", "Running a design studio", "Managing large teams at a corporation", "Contributing to academic or government research"] },
-      { id: 11, text: "Which environment makes you happiest at work?", options: ["Fast-paced startup", "Design-led product teams", "Mission-driven organizations", "Research labs and think tanks"] },
-      { id: 12, text: "What kind of feedback motivates you most?", options: ["Code reviews and technical challenge", "User feedback and creative critiques", "Business impact and growth metrics", "Academic recognition and publications"] },
+      { id: 1, text: "Which stream are you currently in (or planning to choose)?", options: ["Science (PCM)", "Science (PCB)", "Commerce", "Arts / Humanities"] },
+      { id: 2, text: "What kind of subjects do you enjoy the most?", options: ["Math, coding, and logical problem-solving", "Biology, health, and life sciences", "Business, finance, and economics", "Language, social science, design, and creativity"] },
+      { id: 3, text: "What is your top career priority right now?", options: ["High-demand and future-proof careers", "Salary growth and financial security", "Creativity and personal expression", "Social impact and meaningful work"] },
+      { id: 4, text: "How comfortable are you with advanced math?", options: ["Very comfortable", "Comfortable with practice", "Only basic/applied math", "I prefer minimal math"] },
+      { id: 5, text: "Which work style fits you best?", options: ["Analytical and technical", "People-facing and communication-heavy", "Research and detail-oriented", "Creative and idea-driven"] },
+      { id: 6, text: "What learning path sounds best for you?", options: ["Competitive exam + degree route", "Degree + certifications", "Skill-first portfolio route", "Any path with strong job outcomes"] },
+      { id: 7, text: "Which environment motivates you most?", options: ["Fast-paced and innovation-focused", "Stable and structured", "Collaborative teams and clients", "Independent/flexible work"] },
+      { id: 8, text: "What role would you enjoy most?", options: ["Building products or systems", "Solving business/financial problems", "Helping people directly", "Creating content, campaigns, or experiences"] },
+      { id: 9, text: "How much risk can you take in your career path?", options: ["High risk, high reward", "Balanced risk", "Low risk and stable", "Not sure yet"] },
+      { id: 10, text: "Where do you want to be in 8-10 years?", options: ["Specialist in a top domain", "Leadership or management role", "Independent professional/freelancer", "Public sector or social impact role"] },
     ];
 
     const CAREERS = [
-      { id: "ai-ml", name: "AI/ML Engineer", icon: "🤖", match: 94, salary: "$130k–$200k", growth: "Very High", difficulty: "Hard", demand: 97, skills: ["Python", "TensorFlow", "Math", "Statistics", "Cloud"], desc: "Design and train machine learning models that power intelligent systems.", color: "#6c63ff" },
-      { id: "fullstack", name: "Full Stack Developer", icon: "🧑‍💻", match: 89, salary: "$95k–$160k", growth: "High", difficulty: "Medium", demand: 88, skills: ["React", "Node.js", "SQL", "Docker", "APIs"], desc: "Build end-to-end web applications from UI to infrastructure.", color: "#00d4aa" },
-      { id: "data-sci", name: "Data Scientist", icon: "📊", match: 85, salary: "$110k–$175k", growth: "High", difficulty: "Hard", demand: 90, skills: ["Python", "Statistics", "SQL", "Visualization", "ML"], desc: "Extract insights from data to guide business strategy and innovation.", color: "#f5c842" },
-      { id: "ux-design", name: "UX/Product Designer", icon: "🎨", match: 78, salary: "$85k–$145k", growth: "Medium-High", difficulty: "Medium", demand: 75, skills: ["Figma", "Research", "Prototyping", "Psychology", "Storytelling"], desc: "Craft user experiences that feel intuitive, beautiful, and impactful.", color: "#ff6b6b" },
-      { id: "cybersec", name: "Cybersecurity Analyst", icon: "🛡️", match: 82, salary: "$100k–$170k", growth: "Very High", difficulty: "Hard", demand: 95, skills: ["Networking", "Pentesting", "SIEM", "Cloud Security", "Python"], desc: "Protect organizations from digital threats and data breaches.", color: "#a78bfa" },
-      { id: "product-mgr", name: "Product Manager", icon: "🚀", match: 74, salary: "$110k–$180k", growth: "High", difficulty: "Medium", demand: 80, skills: ["Strategy", "Roadmapping", "Data", "Communication", "Empathy"], desc: "Bridge business, design, and engineering to ship products users love.", color: "#fb923c" },
-      { id: "blockchain", name: "Blockchain Developer", icon: "⛓️", match: 71, salary: "$120k–$200k", growth: "Very High", difficulty: "Very Hard", demand: 82, skills: ["Solidity", "Web3.js", "Cryptography", "Rust", "DeFi"], desc: "Build decentralized applications and smart contracts on blockchain networks.", color: "#34d399" },
-      { id: "bioinformatics", name: "Bioinformatics Engineer", icon: "🧬", match: 66, salary: "$90k–$155k", growth: "High", difficulty: "Very Hard", demand: 78, skills: ["Python", "R", "Biology", "Statistics", "Genomics"], desc: "Analyze biological data to drive breakthroughs in medicine and genomics.", color: "#f472b6" },
-      { id: "devops", name: "DevOps/SRE Engineer", icon: "🛠️", match: 80, salary: "$105k–$170k", growth: "High", difficulty: "Hard", demand: 89, skills: ["Linux", "Kubernetes", "CI/CD", "Cloud", "Terraform"], desc: "Build reliable cloud infrastructure, automate deployments, and keep services running smoothly.", color: "#22c55e" },
-      { id: "digital-marketing", name: "Digital Marketing Strategist", icon: "📣", match: 70, salary: "$75k–$130k", growth: "Medium-High", difficulty: "Medium", demand: 72, skills: ["SEO", "Analytics", "Content", "Growth", "Social Media"], desc: "Drive user acquisition and growth with data-led campaigns and brand storytelling.", color: "#f97316" },
+      { id: "ai-ml", name: "AI/ML Engineer", icon: "🤖", match: 92, salary: "$130k-$200k", growth: "Very High", difficulty: "Hard", demand: 97, streams: ["Science (PCM)"], interests: ["Math, coding, and logical problem-solving", "Building products or systems", "Analytical and technical"], skills: ["Python", "TensorFlow", "Math", "Statistics", "Cloud"], desc: "Design and train machine learning systems used in modern products.", color: "#6c63ff" },
+      { id: "fullstack", name: "Full Stack Developer", icon: "🧑‍💻", match: 88, salary: "$95k-$160k", growth: "High", difficulty: "Medium", demand: 88, streams: ["Science (PCM)", "Commerce", "Arts / Humanities"], interests: ["Math, coding, and logical problem-solving", "Building products or systems", "Skill-first portfolio route"], skills: ["React", "Node.js", "SQL", "Docker", "APIs"], desc: "Build end-to-end web applications from frontend to backend.", color: "#00d4aa" },
+      { id: "data-sci", name: "Data Scientist", icon: "📊", match: 86, salary: "$110k-$175k", growth: "High", difficulty: "Hard", demand: 90, streams: ["Science (PCM)", "Commerce"], interests: ["Math, coding, and logical problem-solving", "Solving business/financial problems", "Research and detail-oriented"], skills: ["Python", "Statistics", "SQL", "Visualization", "ML"], desc: "Turn raw data into business and product decisions.", color: "#f5c842" },
+      { id: "cybersec", name: "Cybersecurity Analyst", icon: "🛡️", match: 84, salary: "$100k-$170k", growth: "Very High", difficulty: "Hard", demand: 95, streams: ["Science (PCM)", "Commerce"], interests: ["Math, coding, and logical problem-solving", "Research and detail-oriented", "High-demand and future-proof careers"], skills: ["Networking", "Pentesting", "SIEM", "Cloud Security", "Python"], desc: "Protect systems, networks, and data from security threats.", color: "#a78bfa" },
+      { id: "chartered-accountant", name: "Chartered Accountant (CA)", icon: "📘", match: 83, salary: "$60k-$160k", growth: "High", difficulty: "Hard", demand: 86, streams: ["Commerce"], interests: ["Business, finance, and economics", "Solving business/financial problems", "Stable and structured"], skills: ["Accounting", "Taxation", "Audit", "Compliance", "Finance"], desc: "Lead financial reporting, taxation, and audit for businesses.", color: "#14b8a6" },
+      { id: "investment-banker", name: "Investment Banking Analyst", icon: "💹", match: 79, salary: "$120k-$220k", growth: "Medium-High", difficulty: "Very Hard", demand: 78, streams: ["Commerce", "Science (PCM)"], interests: ["Business, finance, and economics", "Salary growth and financial security", "High risk, high reward"], skills: ["Financial Modeling", "Valuation", "Markets", "Excel", "Communication"], desc: "Advise organizations on capital, M&A, and strategic finance deals.", color: "#f97316" },
+      { id: "clinical-psychologist", name: "Clinical Psychologist", icon: "🧠", match: 77, salary: "$70k-$140k", growth: "High", difficulty: "Medium", demand: 82, streams: ["Arts / Humanities", "Science (PCB)"], interests: ["Language, social science, design, and creativity", "Helping people directly", "Social impact and meaningful work"], skills: ["Counselling", "Assessment", "Casework", "Empathy", "Ethics"], desc: "Support mental health through assessment, therapy, and care plans.", color: "#ec4899" },
+      { id: "biotech-research", name: "Biotech Researcher", icon: "🧬", match: 78, salary: "$85k-$155k", growth: "High", difficulty: "Hard", demand: 84, streams: ["Science (PCB)"], interests: ["Biology, health, and life sciences", "Research and detail-oriented", "Specialist in a top domain"], skills: ["Biology", "Genetics", "Lab Methods", "Data Analysis", "Research"], desc: "Conduct life-science research for healthcare, pharma, and biotech.", color: "#f472b6" },
+      { id: "ux-design", name: "UX/Product Designer", icon: "🎨", match: 76, salary: "$85k-$145k", growth: "Medium-High", difficulty: "Medium", demand: 75, streams: ["Arts / Humanities", "Science (PCM)", "Commerce"], interests: ["Language, social science, design, and creativity", "Creative and idea-driven", "Creating content, campaigns, or experiences"], skills: ["Figma", "Research", "Prototyping", "Psychology", "Storytelling"], desc: "Design digital products that are intuitive, useful, and delightful.", color: "#ff6b6b" },
+      { id: "digital-marketing", name: "Digital Marketing Strategist", icon: "📣", match: 74, salary: "$75k-$130k", growth: "Medium-High", difficulty: "Medium", demand: 72, streams: ["Commerce", "Arts / Humanities", "Science (PCM)"], interests: ["Business, finance, and economics", "Creating content, campaigns, or experiences", "People-facing and communication-heavy"], skills: ["SEO", "Analytics", "Content", "Growth", "Social Media"], desc: "Grow brands through campaign strategy, performance marketing, and content.", color: "#fb923c" },
+      { id: "civil-services", name: "Civil Services Officer", icon: "🏛️", match: 73, salary: "$45k-$110k", growth: "Stable", difficulty: "Hard", demand: 76, streams: ["Science (PCM)", "Science (PCB)", "Commerce", "Arts / Humanities"], interests: ["Social impact and meaningful work", "Public sector or social impact role", "Stable and structured"], skills: ["Policy", "Governance", "Communication", "General Studies", "Ethics"], desc: "Work in public administration and policy implementation at scale.", color: "#22c55e" },
     ];
+
+    const STREAM_TAGS = {
+      "Science (PCM)": "PCM",
+      "Science (PCB)": "PCB",
+      "Commerce": "Commerce",
+      "Arts / Humanities": "Arts",
+    };
+
+    function clampScore(value) {
+      return Math.min(99, Math.max(35, Math.round(value)));
+    }
+
+    function buildCareerGuidance(answers = {}) {
+      const selectedStream = answers[1];
+      const mainInterest = answers[2];
+      const careerPriority = answers[3];
+      const workStyle = answers[5];
+      const roleChoice = answers[8];
+      const riskLevel = answers[9];
+
+      return CAREERS.map(career => {
+        let score = (career.match * 0.52) + (career.demand * 0.28);
+        const reasons = [];
+
+        if (selectedStream && career.streams.includes(selectedStream)) {
+          score += 18;
+          reasons.push(`${STREAM_TAGS[selectedStream] || selectedStream} stream fit`);
+        } else if (selectedStream) {
+          score -= 12;
+        }
+
+        if (mainInterest && career.interests.includes(mainInterest)) {
+          score += 14;
+          reasons.push("strong interest match");
+        }
+
+        if (workStyle && career.interests.includes(workStyle)) {
+          score += 9;
+          reasons.push("work-style aligned");
+        }
+
+        if (roleChoice && career.interests.includes(roleChoice)) {
+          score += 8;
+        }
+
+        if (careerPriority === "High-demand and future-proof careers") {
+          score += (career.demand - 70) * 0.3;
+        }
+
+        if (careerPriority === "Salary growth and financial security" && (career.id === "investment-banker" || career.id === "ai-ml" || career.id === "data-sci")) {
+          score += 8;
+          reasons.push("strong salary upside");
+        }
+
+        if (careerPriority === "Creativity and personal expression" && (career.id === "ux-design" || career.id === "digital-marketing")) {
+          score += 10;
+          reasons.push("creativity-friendly path");
+        }
+
+        if (careerPriority === "Social impact and meaningful work" && (career.id === "clinical-psychologist" || career.id === "civil-services")) {
+          score += 10;
+          reasons.push("high social impact");
+        }
+
+        if (riskLevel === "Low risk and stable" && career.growth === "Stable") score += 7;
+        if (riskLevel === "High risk, high reward" && career.id === "investment-banker") score += 7;
+
+        return {
+          ...career,
+          match: clampScore(score),
+          guideReason: reasons.slice(0, 2).join(" • ") || "balanced stream-interest-demand fit",
+        };
+      }).sort((a, b) => b.match - a.match);
+    }
 
     const ROADMAPS = {
       "ai-ml": {
@@ -1919,9 +1999,12 @@
       );
     }
 
-    function DashboardPage({ onNavigate, assessedAt }) {
-      const sorted = [...CAREERS].sort((a, b) => b.match - a.match);
+    function DashboardPage({ onNavigate, assessedAt, assessmentAnswers }) {
+      const sorted = buildCareerGuidance(assessmentAnswers);
       const top = sorted[0];
+      const selectedStream = assessmentAnswers?.[1] || "Not selected";
+      const selectedInterest = assessmentAnswers?.[2] || "Not selected";
+      const selectedPriority = assessmentAnswers?.[3] || "Not selected";
       return (
         <div className="dashboard fade-in">
           <div className="section-label">Your Personalized Results</div>
@@ -1929,7 +2012,7 @@
             Career Intelligence Report
           </h2>
           <p style={{ color: "var(--muted)", fontSize: ".9rem", marginBottom: 8 }}>
-            Based on your assessment, here are your top career matches ranked by compatibility.
+            Ranked using your stream, interests, and market demand priority.
           </p>
           {assessedAt && (
             <p style={{ color: "var(--muted)", fontSize: ".76rem", fontFamily: "var(--font-mono)", marginBottom: 14 }}>
@@ -1937,7 +2020,7 @@
             </p>
           )}
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
-            {["Builder 🔨", "Analytical 🧠", "Risk-Taker ⚡", "Self-Learner 📚"].map(t => (
+            {[`Stream: ${selectedStream}`, `Interest: ${selectedInterest}`, `Priority: ${selectedPriority}`].map(t => (
               <span key={t} className="tag tag-purple" style={{ padding: "6px 14px", fontSize: ".8rem" }}>{t}</span>
             ))}
           </div>
@@ -1957,8 +2040,10 @@
                     <div className="career-tags">
                       <span className="tag tag-teal">{c.salary}</span>
                       <span className="tag tag-purple">{c.growth} Growth</span>
+                      <span className="tag tag-red">Demand {c.demand}</span>
                       <span className="tag tag-gold">{c.difficulty}</span>
                     </div>
+                    <p style={{ fontSize: ".75rem", marginTop: 10, color: "var(--accent2)", fontFamily: "var(--font-mono)" }}>{c.guideReason}</p>
                   </div>
                 </div>
               ))}
@@ -1977,7 +2062,7 @@
                 <div style={{ fontSize: "2.5rem", margin: "8px 0" }}>{top.icon}</div>
                 <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.1rem" }}>{top.name}</div>
                 <div style={{ fontSize: ".82rem", color: "var(--muted)", margin: "8px 0 16px", lineHeight: 1.5 }}>{top.desc}</div>
-                <button className="btn-primary" style={{ width: "100%", padding: "12px" }} onClick={() => onNavigate("roadmap", "ai-ml")}>View My Roadmap →</button>
+                <button className="btn-primary" style={{ width: "100%", padding: "12px" }} onClick={() => onNavigate("roadmap", top.id)}>View My Roadmap →</button>
               </div>
               <div className="panel-card">
                 <h4>Quick Actions</h4>
@@ -2036,7 +2121,18 @@
     }
 
     function RoadmapPage({ careerId }) {
-      const roadmap = ROADMAPS[careerId] || ROADMAPS["ai-ml"];
+      const selectedCareer = CAREERS.find(c => c.id === careerId) || CAREERS[0];
+      const fallbackRoadmap = {
+        career: selectedCareer.name,
+        phases: [
+          { phase: "Phase 1", title: "Foundation", months: "Months 1-2", status: "done", desc: `Build core foundations for ${selectedCareer.name}: fundamentals, terminology, and entry-level tools.`, resources: ["Beginner roadmap", "Official docs", "Intro projects"] },
+          { phase: "Phase 2", title: "Core Skills", months: "Months 3-5", status: "active", desc: "Develop role-specific practical skills and complete guided assignments.", resources: ["Structured course", "Mentored practice", "Case studies"] },
+          { phase: "Phase 3", title: "Applied Projects", months: "Months 6-8", status: "", desc: "Ship portfolio projects aligned to internships and entry-level roles.", resources: ["Portfolio template", "GitHub/Behance", "Mock interviews"] },
+          { phase: "Phase 4", title: "Industry Readiness", months: "Months 9-10", status: "", desc: "Strengthen resume, communication, and interview readiness with market-focused practice.", resources: ["Resume checklist", "Interview bank", "Networking plan"] },
+          { phase: "Phase 5", title: "Placement Strategy", months: "Months 11-12", status: "", desc: "Apply strategically and refine profile based on interview feedback and demand trends.", resources: ["Target company list", "Application tracker", "Mentor feedback"] },
+        ]
+      };
+      const roadmap = ROADMAPS[careerId] || fallbackRoadmap;
       return (
         <div className="roadmap-page fade-in">
           <div className="section-label">Dynamic Roadmap Generator</div>
@@ -2312,18 +2408,36 @@
       const [authReady, setAuthReady] = useState(false);
       const [userData, setUserData] = useState(createDefaultUserData());
 
+      const resetClientUserState = () => {
+        setSubData(null);
+        setUserData(createDefaultUserData());
+      };
+
+      const clearSessionStorage = () => {
+        localStorage.removeItem(STORAGE_SESSION_KEY);
+        localStorage.removeItem(LEGACY_STORAGE_SESSION_KEY);
+      };
+
       useEffect(() => {
         let cancelled = false;
         const bootstrap = async () => {
           const savedSession = safeJsonParse(localStorage.getItem(STORAGE_SESSION_KEY) || "{}", {});
           const token = savedSession?.token;
           if (!token) {
+            if (!cancelled) {
+              setAuthToken(null);
+              setCurrentUser(null);
+              resetClientUserState();
+            }
             if (!cancelled) setAuthReady(true);
             return;
           }
 
           try {
             const me = await getCurrentUser(token);
+            if (savedSession?.userId && Number(savedSession.userId) !== Number(me.user?.id)) {
+              throw new Error("Session user mismatch.");
+            }
             const profileRes = await getProfileData(token).catch(() => ({ profile: null }));
             const hydrated = hydrateUserData(profileRes.profile || null);
 
@@ -2333,7 +2447,12 @@
             setUserData(hydrated);
             setSubData(hydrated.subData || null);
           } catch {
-            localStorage.removeItem(STORAGE_SESSION_KEY);
+            clearSessionStorage();
+            if (!cancelled) {
+              setAuthToken(null);
+              setCurrentUser(null);
+              resetClientUserState();
+            }
           } finally {
             if (!cancelled) setAuthReady(true);
           }
@@ -2373,6 +2492,7 @@
       };
 
       const handleAuthSuccess = ({ token, user, profile }) => {
+        resetClientUserState();
         const hydrated = hydrateUserData(profile || null);
         setAuthToken(token);
         setCurrentUser(user);
@@ -2382,11 +2502,10 @@
       };
 
       const handleLogout = () => {
-        localStorage.removeItem(STORAGE_SESSION_KEY);
+        clearSessionStorage();
         setAuthToken(null);
         setCurrentUser(null);
-        setUserData(createDefaultUserData());
-        setSubData(null);
+        resetClientUserState();
         setPage("home");
       };
 
@@ -2414,13 +2533,13 @@
       if (!currentUser) {
         return (
           <div className="noise">
-            <LoginPage onAuthSuccess={handleAuthSuccess} />
+            <LoginPage onAuthStart={resetClientUserState} onAuthSuccess={handleAuthSuccess} />
           </div>
         );
       }
 
       return (
-        <div className="noise">
+        <div className="noise" key={`user-${currentUser.id}`}>
           <nav>
             <div className="nav-logo">NexusAI</div>
             <div className="nav-links">{NAV_ITEMS.map(n => <button key={n.key} className={`nav-btn${page === n.key ? " active" : ""}`} onClick={() => navigate(n.key)}>{n.label}</button>)}</div>
@@ -2432,7 +2551,7 @@
           </nav>
           {page === "home" && <LandingPage onNavigate={navigate} />}
           {page === "assessment" && <AssessmentPage onComplete={handleAssessmentComplete} initialAnswers={userData.assessmentAnswers} />}
-          {page === "dashboard" && <DashboardPage onNavigate={navigate} assessedAt={userData.assessedAt} />}
+          {page === "dashboard" && <DashboardPage onNavigate={navigate} assessedAt={userData.assessedAt} assessmentAnswers={userData.assessmentAnswers} />}
           {page === "compare" && <ComparisonPage initialSelected={userData.compareSelected} onSelectedChange={selected => patchUserData({ compareSelected: selected })} />}
           {page === "roadmap" && <RoadmapPage careerId={subData || "ai-ml"} />}
           {page === "whatif" && <WhatIfPage initialPrefs={userData.whatIfPrefs} onPrefsChange={prefs => patchUserData({ whatIfPrefs: prefs })} />}

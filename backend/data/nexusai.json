@@ -6,16 +6,75 @@
       "name": "Sheray Vatsya",
       "passwordHash": "$2a$10$kvOlEvBe3SaNtyhek1iLJefYhoFFsSjFWUkpOXznkENY.kJ/3TS/a",
       "createdAt": "2026-04-20T10:26:13.613Z",
-      "updatedAt": "2026-04-20T11:35:55.729Z"
+      "updatedAt": "2026-04-20T12:20:19.244Z"
+    },
+    {
+      "id": 2,
+      "username": "red",
+      "name": "Sasjddcvcv",
+      "passwordHash": "$2a$10$OEd67rlu0yTJpFU.1gAu5ObqV2mQcd5MRbFeh7aN.zZNFCkk/3JRO",
+      "createdAt": "2026-04-20T12:21:49.992Z",
+      "updatedAt": "2026-04-20T12:21:50.463Z"
+    },
+    {
+      "id": 3,
+      "username": "vats",
+      "name": "vatsya",
+      "passwordHash": "$2a$10$Kv6NFfv6hsbEMGykK9LuOuryc3mQl6CJA.56W8GBYPutkGW6/PvUa",
+      "createdAt": "2026-04-20T12:22:58.064Z",
+      "updatedAt": "2026-04-20T12:36:45.535Z"
+    },
+    {
+      "id": 4,
+      "username": "rohan",
+      "name": "Rohan",
+      "passwordHash": "$2a$10$yoI61tatkQhGYncezD/pL.rqIbYs/grj/VqsHSMoqENgQo4Q1OA/a",
+      "createdAt": "2026-04-20T12:37:11.673Z",
+      "updatedAt": "2026-04-20T12:37:30.309Z"
+    },
+    {
+      "id": 5,
+      "username": "u22ffa783",
+      "name": "User One",
+      "passwordHash": "$2a$10$Y8RCKB0N0q5XB3S0MbHN1uFNZ1/2nP0T/X9d.YOu2RDPvh9dBjDIu",
+      "createdAt": "2026-04-20T12:39:02.331Z",
+      "updatedAt": "2026-04-20T12:39:02.457Z"
+    },
+    {
+      "id": 6,
+      "username": "ua6548721",
+      "name": "User Two",
+      "passwordHash": "$2a$10$B.3B6/D8TKW2tKjugrCIFe7uzLmKFtOyVBr9PuojGsZOiTQbbQNR.",
+      "createdAt": "2026-04-20T12:39:02.449Z",
+      "updatedAt": "2026-04-20T12:39:02.460Z"
+    },
+    {
+      "id": 7,
+      "username": "sherayvatsya",
+      "name": "Sheray",
+      "passwordHash": "$2a$10$k6a1YAqLB.jYxTEZdclv2uCE8dvgmEbY.fcGC84U/e3R83pfPR0T2",
+      "createdAt": "2026-04-20T13:18:33.253Z",
+      "updatedAt": "2026-04-20T13:18:33.253Z"
     }
   ],
   "profiles": {
     "1": {
       "data": {
-        "assessed": false,
-        "assessmentAnswers": {},
-        "assessedAt": null,
-        "subData": "devops",
+        "assessed": true,
+        "assessmentAnswers": {
+          "1": "Science (PCB)",
+          "2": "Biology, health, and life sciences",
+          "3": "Salary growth and financial security",
+          "4": "Comfortable with practice",
+          "5": "People-facing and communication-heavy",
+          "6": "Competitive exam + degree route",
+          "7": "Stable and structured",
+          "8": "Helping people directly",
+          "9": "Balanced risk",
+          "10": "Specialist in a top domain"
+        },
+        "assessedAt": "2026-04-20T12:04:42.668Z",
+        "subData": "clinical-psychologist",
         "compareSelected": [
           "ai-ml",
           "fullstack",
@@ -89,7 +148,118 @@
           }
         ]
       },
-      "updatedAt": "2026-04-20T11:35:55.729Z"
+      "updatedAt": "2026-04-20T12:20:19.244Z"
+    },
+    "2": {
+      "data": {
+        "assessed": false,
+        "assessmentAnswers": {},
+        "assessedAt": null,
+        "subData": null,
+        "compareSelected": [
+          "ai-ml",
+          "fullstack",
+          "cybersec"
+        ],
+        "whatIfPrefs": {
+          "salaryW": 70,
+          "codingW": 80,
+          "remoteW": 60,
+          "creativityW": 50
+        },
+        "collegeFilters": {
+          "type": "all",
+          "budget": "all"
+        },
+        "chatMessages": [
+          {
+            "role": "ai",
+            "text": "👋 Hey! I'm **NexusAI**, your personal career mentor. I can help with career choices, learning roadmaps, interview prep, salary negotiation, skill gaps — anything career-related. What's on your mind?",
+            "time": "Just now"
+          }
+        ]
+      },
+      "updatedAt": "2026-04-20T12:21:50.463Z"
+    },
+    "3": {
+      "data": {
+        "assessed": false,
+        "assessmentAnswers": {},
+        "assessedAt": null,
+        "subData": null,
+        "compareSelected": [
+          "ai-ml",
+          "fullstack",
+          "cybersec"
+        ],
+        "whatIfPrefs": {
+          "salaryW": 70,
+          "codingW": 80,
+          "remoteW": 60,
+          "creativityW": 50
+        },
+        "collegeFilters": {
+          "type": "all",
+          "budget": "all"
+        },
+        "chatMessages": [
+          {
+            "role": "ai",
+            "text": "👋 Hey! I'm **NexusAI**, your personal career mentor. I can help with career choices, learning roadmaps, interview prep, salary negotiation, skill gaps — anything career-related. What's on your mind?",
+            "time": "Just now"
+          }
+        ]
+      },
+      "updatedAt": "2026-04-20T12:36:45.535Z"
+    },
+    "4": {
+      "data": {
+        "assessed": false,
+        "assessmentAnswers": {},
+        "assessedAt": null,
+        "subData": null,
+        "compareSelected": [
+          "ai-ml",
+          "fullstack",
+          "cybersec"
+        ],
+        "whatIfPrefs": {
+          "salaryW": 70,
+          "codingW": 80,
+          "remoteW": 60,
+          "creativityW": 50
+        },
+        "collegeFilters": {
+          "type": "all",
+          "budget": "all"
+        },
+        "chatMessages": [
+          {
+            "role": "ai",
+            "text": "👋 Hey! I'm **NexusAI**, your personal career mentor. I can help with career choices, learning roadmaps, interview prep, salary negotiation, skill gaps — anything career-related. What's on your mind?",
+            "time": "Just now"
+          }
+        ]
+      },
+      "updatedAt": "2026-04-20T12:37:30.309Z"
+    },
+    "5": {
+      "data": {
+        "subData": "ai-ml",
+        "assessmentAnswers": {
+          "1": "Science (PCM)"
+        }
+      },
+      "updatedAt": "2026-04-20T12:39:02.457Z"
+    },
+    "6": {
+      "data": {
+        "subData": "clinical-psychologist",
+        "assessmentAnswers": {
+          "1": "Science (PCB)"
+        }
+      },
+      "updatedAt": "2026-04-20T12:39:02.460Z"
     }
   }
 }

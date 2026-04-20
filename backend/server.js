@@ -6,11 +6,21 @@ import jwt from "jsonwebtoken";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createServer } from "node:http";
+import { Server } from "socket.io";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, ".env") });
+const WEB_INDEX_PATH = resolve(__dirname, "..", "index.html");
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CORS_ORIGIN || true,
+    credentials: true,
+  },
+});
 const PORT = Number(process.env.PORT || 4000);
 const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-env";
 const DB_PATH = process.env.DB_PATH || "./data/nexusai.json";
@@ -28,15 +38,73 @@ app.use(
   })
 );
 app.use(express.json({ limit: "2mb" }));
+app.use((_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
 
 const nowIso = () => new Date().toISOString();
 const normalizeUsername = (value) => String(value || "").trim().toLowerCase();
 const stripPassword = (user) => ({ id: user.id, username: user.username, name: user.name });
 const signToken = (user) => jwt.sign({ sub: user.id, username: user.username, name: user.name }, JWT_SECRET, { expiresIn: "7d" });
 
-let dbState = { users: [], profiles: {} };
+let dbState = { users: [], profiles: {}, mentorChats: {} };
 let writeQueue = Promise.resolve();
 let mentorKnowledge = [];
+
+const MENTORS = [
+  { id: "alex", name: "Alex Kumar", expertise: "AI Strategy", rating: 4.9, profile: "AI career mentor with 10+ years helping students land top roles.", avatar: "🧠" },
+  { id: "sana", name: "Sana Patel", expertise: "Product Management", rating: 4.8, profile: "Ex-Stripe product lead focused on career growth and role fit.", avatar: "🚀" },
+  { id: "marcus", name: "Marcus Lee", expertise: "UX & Design", rating: 4.7, profile: "Design mentor for students moving into product and UX roles.", avatar: "🎨" },
+  { id: "nina", name: "Nina Nair", expertise: "Cybersecurity", rating: 4.8, profile: "Security strategist who helps learners build real-world cyber portfolios.", avatar: "🛡️" },
+];
+
+const mentorStatus = new Map(MENTORS.map((mentor) => [mentor.id, Math.random() > 0.15]));
+const userSockets = new Map();
+
+const userMentorRoom = (userId, mentorId) => `mentor:${mentorId}:user:${userId}`;
+
+const getMentorChat = (userId, mentorId) => {
+  const userIdKey = String(userId);
+  const mentorIdKey = String(mentorId);
+  const userChats = dbState.mentorChats[userIdKey] || {};
+  return Array.isArray(userChats[mentorIdKey]) ? [...userChats[mentorIdKey]] : [];
+};
+
+const appendMentorChat = (userId, mentorId, message) => {
+  const userIdKey = String(userId);
+  const mentorIdKey = String(mentorId);
+  dbState.mentorChats[userIdKey] ??= {};
+  dbState.mentorChats[userIdKey][mentorIdKey] ??= [];
+  dbState.mentorChats[userIdKey][mentorIdKey].push(message);
+  return dbState.mentorChats[userIdKey][mentorIdKey];
+};
+
+const formatMentorMessage = (sender, text) => ({ sender, text, timestamp: nowIso() });
+
+const createMentorReply = (mentorId, userMessage) => {
+  const mentor = MENTORS.find((m) => m.id === mentorId);
+  const base = mentor ? `As ${mentor.expertise} mentor,` : "As your mentor,";
+  const lower = String(userMessage || "").toLowerCase();
+  if (lower.includes("resume") || lower.includes("cv")) {
+    return `${base} I recommend focusing on your core strengths, tailoring your resume to your target role, and adding one strong project that shows impact.`;
+  }
+  if (lower.includes("interview")) {
+    return `${base} practice problem-solving with mock interviews, explain your projects clearly, and prepare one story for each common behavioral question.`;
+  }
+  if (lower.includes("skills")) {
+    return `${base} prioritize the skills most used in your desired roles, then build a small project that ties them together.`;
+  }
+  return `${base} keep your learning consistent, get feedback early, and I can help with next steps once you share your current goals.`;
+};
+
+const getAvailableMentors = () =>
+  MENTORS.map((mentor) => ({
+    ...mentor,
+    online: Boolean(mentorStatus.get(mentor.id)),
+  }));
 
 const STOP_WORDS = new Set([
   "a", "an", "and", "are", "as", "at", "be", "but", "by", "can", "could", "did", "do", "does",
@@ -54,6 +122,7 @@ async function ensureDbFile() {
     dbState = {
       users: Array.isArray(parsed?.users) ? parsed.users : [],
       profiles: parsed?.profiles && typeof parsed.profiles === "object" ? parsed.profiles : {},
+      mentorChats: parsed?.mentorChats && typeof parsed.mentorChats === "object" ? parsed.mentorChats : {},
     };
   } catch {
     dbState = { users: [], profiles: {} };
@@ -180,6 +249,10 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+app.get("/", (_req, res) => {
+  res.sendFile(WEB_INDEX_PATH);
+});
+
 app.post("/api/auth/signup", async (req, res) => {
   const rawName = String(req.body?.name || "").trim();
   const username = normalizeUsername(req.body?.username);
@@ -259,6 +332,11 @@ app.get("/api/auth/me", authRequired, async (req, res) => {
 });
 
 app.get("/api/profile", authRequired, async (req, res) => {
+  const userId = Number(req.auth.sub);
+  const user = dbState.users.find((u) => u.id === userId);
+  if (!user) {
+    return res.status(401).json({ error: "Session user no longer exists." });
+  }
   const key = String(req.auth.sub);
   const profileRow = dbState.profiles[key] || null;
   return res.json({ profile: profileRow?.data || null, updatedAt: profileRow?.updatedAt || null });
@@ -273,6 +351,10 @@ app.put("/api/profile", authRequired, async (req, res) => {
 
   try {
     const userId = Number(req.auth.sub);
+    const user = dbState.users.find((u) => u.id === userId);
+    if (!user) {
+      return res.status(401).json({ error: "Session user no longer exists." });
+    }
     const key = String(userId);
     const updatedAt = nowIso();
 
@@ -287,6 +369,128 @@ app.put("/api/profile", authRequired, async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message || "Failed to save profile." });
   }
+});
+
+app.get("/api/mentors", authRequired, async (req, res) => {
+  return res.json({ mentors: getAvailableMentors() });
+});
+
+app.get("/api/mentors/:mentorId/chat", authRequired, async (req, res) => {
+  const userId = Number(req.auth.sub);
+  const mentorId = String(req.params.mentorId);
+  if (!MENTORS.some((mentor) => mentor.id === mentorId)) {
+    return res.status(404).json({ error: "Mentor not found." });
+  }
+  const chat = getMentorChat(userId, mentorId);
+  return res.json({ chat });
+});
+
+app.post("/api/mentors/:mentorId/chat", authRequired, async (req, res) => {
+  const userId = Number(req.auth.sub);
+  const mentorId = String(req.params.mentorId);
+  const text = String(req.body?.text || "").trim();
+  if (!text) {
+    return res.status(400).json({ error: "Message text is required." });
+  }
+  if (!MENTORS.some((mentor) => mentor.id === mentorId)) {
+    return res.status(404).json({ error: "Mentor not found." });
+  }
+
+  const userMessage = formatMentorMessage("user", text);
+  appendMentorChat(userId, mentorId, userMessage);
+  await persistDb();
+
+  const mentorReply = formatMentorMessage("mentor", createMentorReply(mentorId, text));
+  appendMentorChat(userId, mentorId, mentorReply);
+  await persistDb();
+
+  return res.json({ chat: getMentorChat(userId, mentorId), reply: mentorReply });
+});
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+  if (!token) {
+    return next(new Error("Missing auth token"));
+  }
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    socket.data.user = {
+      id: Number(payload.sub),
+      username: payload.username,
+      name: payload.name,
+    };
+    return next();
+  } catch (err) {
+    return next(new Error("Invalid or expired auth token"));
+  }
+});
+
+io.on("connection", (socket) => {
+  const userId = socket.data.user.id;
+  userSockets.set(userId, socket);
+
+  socket.on("mentor:join", ({ mentorId }) => {
+    const room = userMentorRoom(userId, mentorId);
+    socket.join(room);
+  });
+
+  socket.on("mentor:message", async ({ mentorId, text }) => {
+    const realText = String(text || "").trim();
+    if (!realText || !MENTORS.some((mentor) => mentor.id === mentorId)) {
+      return;
+    }
+    const room = userMentorRoom(userId, mentorId);
+    const userMessage = formatMentorMessage("user", realText);
+    appendMentorChat(userId, mentorId, userMessage);
+    await persistDb();
+    io.to(room).emit("mentor:message", userMessage);
+
+    const mentorReply = formatMentorMessage("mentor", createMentorReply(mentorId, realText));
+    appendMentorChat(userId, mentorId, mentorReply);
+    await persistDb();
+    setTimeout(() => {
+      io.to(room).emit("mentor:message", mentorReply);
+    }, 800);
+  });
+
+  socket.on("mentor:call-request", ({ mentorId, callType }) => {
+    const room = userMentorRoom(userId, mentorId);
+    io.to(room).emit("mentor:call-status", {
+      mentorId,
+      status: "requested",
+      callType,
+      message: `Call request sent to ${mentorId}.`,
+    });
+    setTimeout(() => {
+      io.to(room).emit("mentor:call-status", {
+        mentorId,
+        status: "accepted",
+        callType,
+        message: `${mentorId} is ready to connect.`,
+      });
+    }, 1200);
+  });
+
+  socket.on("mentor:webrtc-offer", ({ mentorId, offer }) => {
+    const room = userMentorRoom(userId, mentorId);
+    io.to(room).emit("mentor:webrtc-offer", { mentorId, offer });
+  });
+
+  socket.on("mentor:webrtc-answer", ({ mentorId, answer }) => {
+    const room = userMentorRoom(userId, mentorId);
+    io.to(room).emit("mentor:webrtc-answer", { mentorId, answer });
+  });
+
+  socket.on("mentor:ice-candidate", ({ mentorId, candidate }) => {
+    const room = userMentorRoom(userId, mentorId);
+    io.to(room).emit("mentor:ice-candidate", { mentorId, candidate });
+  });
+
+  socket.on("disconnect", () => {
+    if (userSockets.get(userId) === socket) {
+      userSockets.delete(userId);
+    }
+  });
 });
 
 app.post("/api/chat", async (req, res) => {
@@ -355,7 +559,7 @@ app.post("/api/chat", async (req, res) => {
 ensureDbFile()
   .then(() => loadKnowledgeDb())
   .then(() => {
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`Backend running at http://localhost:${PORT}`);
     });
   })

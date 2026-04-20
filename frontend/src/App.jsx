@@ -1,7 +1,33 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { io } from "socket.io-client";
 import "./styles.css";
 import { QUESTIONS, CAREERS, ROADMAPS, TRENDS_DATA, JOURNEYS, COLLEGES_DB } from "./data";
 import { askClaude } from "./api";
+
+const API_BASE = "http://localhost:4000";
+async function fetchJson(path, options = {}, token = "") {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (!res.ok) {
+    let message = res.statusText || "Request failed.";
+    try {
+      const json = await res.json();
+      if (json?.error) {
+        message = json.error;
+      }
+    } catch {
+      // ignore invalid JSON response
+    }
+    throw new Error(message);
+  }
+
+  return res.json();
+}
 
 function SkillBar({ label, value, color="#6c63ff" }) {
   const [w, setW] = useState(0);
@@ -30,7 +56,186 @@ function MeterCell({ value, max=100, color }) {
   );
 }
 
-// â”€â”€â”€ PAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function LoginPage({ onLogin, onSwitchToSignup, loading, error }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  return (
+    <div className="page fade-in">
+      <div className="page-header">
+        <div className="section-label">Member Login</div>
+        <h2 style={{fontFamily:"var(--font-display)",fontSize:"1.8rem",fontWeight:800,letterSpacing:"-1px"}}>
+          Welcome back. Sign in to your NexusAI account.
+        </h2>
+      </div>
+      <div className="q-card" style={{maxWidth:520,margin:"0 auto"}}>
+        <div style={{display:"grid",gap:16}}>
+          <label style={{fontSize:".85rem",color:"var(--muted)",fontFamily:"var(--font-mono)"}}>Username</label>
+          <input
+            className="chat-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
+          />
+          <label style={{fontSize:".85rem",color:"var(--muted)",fontFamily:"var(--font-mono)"}}>Password</label>
+          <input
+            className="chat-input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+          />
+          {error && <div style={{color:"#f87171",fontSize:".9rem"}}>{error}</div>}
+          <button className="btn-primary" style={{width:"100%"}} disabled={loading} onClick={() => onLogin(username, password)}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+          <button className="btn-ghost" style={{width:"100%"}} onClick={onSwitchToSignup}>
+            Create a new account
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SignupPage({ onSignup, onSwitchToLogin, loading, error }) {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  return (
+    <div className="page fade-in">
+      <div className="page-header">
+        <div className="section-label">Create Account</div>
+        <h2 style={{fontFamily:"var(--font-display)",fontSize:"1.8rem",fontWeight:800,letterSpacing:"-1px"}}>
+          Start your personalized NexusAI journey.
+        </h2>
+      </div>
+      <div className="q-card" style={{maxWidth:520,margin:"0 auto"}}>
+        <div style={{display:"grid",gap:16}}>
+          <label style={{fontSize:".85rem",color:"var(--muted)",fontFamily:"var(--font-mono)"}}>Full Name</label>
+          <input
+            className="chat-input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your full name"
+          />
+          <label style={{fontSize:".85rem",color:"var(--muted)",fontFamily:"var(--font-mono)"}}>Username</label>
+          <input
+            className="chat-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Choose a username"
+          />
+          <label style={{fontSize:".85rem",color:"var(--muted)",fontFamily:"var(--font-mono)"}}>Password</label>
+          <input
+            className="chat-input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Create a secure password"
+          />
+          <div style={{fontSize:".78rem",color:"var(--muted)",marginTop:4}}>
+            Password must be at least 6 characters long.
+          </div>
+          {error && <div style={{color:"#f87171",fontSize:".9rem"}}>{error}</div>}
+          <button className="btn-primary" style={{width:"100%"}} disabled={loading} onClick={() => onSignup(name, username, password)}>
+            {loading ? "Creating account..." : "Sign Up"}
+          </button>
+          <button className="btn-ghost" style={{width:"100%"}} onClick={onSwitchToLogin}>
+            Already have an account?
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MentorListPage({ mentors, selectedMentorId, onSelectMentor }) {
+  return (
+    <div className="mentor-list-page fade-in">
+      <div className="section-label">Mentor Network</div>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:"2rem",fontWeight:800,letterSpacing:"-1px",marginBottom:12}}>
+        Connect with a Mentor Who Matches Your Goals
+      </h2>
+      <div className="mentor-list-grid">
+        {mentors.map((mentor) => (
+          <button
+            key={mentor.id}
+            className={`mentor-card${selectedMentorId === mentor.id ? " selected" : ""}`}
+            onClick={() => onSelectMentor(mentor)}
+          >
+            <div className="mentor-card-avatar">{mentor.avatar}</div>
+            <div>
+              <div className="mentor-card-name">{mentor.name}</div>
+              <div className="mentor-card-expertise">{mentor.expertise}</div>
+              <div className="mentor-card-rating">Rating: {mentor.rating.toFixed(1)} ★</div>
+            </div>
+            <div className={`mentor-badge ${mentor.online ? "online" : "offline"}`}>
+              {mentor.online ? "Online" : "Offline"}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MentorChatPage({ 
+  mentor,
+  chat,
+  message,
+  onMessageChange,
+  onSendMessage,
+  online,
+  callStatus,
+  onStartAudioCall,
+  onStartVideoCall,
+  onHangup,
+}) {
+  return (
+    <div className="mentor-chat-page fade-in">
+      <div className="section-label">Mentor Conversation</div>
+      <div className="mentor-chat-header">
+        <div>
+          <h2 style={{fontFamily:"var(--font-display)",fontSize:"1.9rem",fontWeight:800,letterSpacing:"-1px"}}>{mentor.name}</h2>
+          <div style={{color:"var(--muted)",fontSize:'.9rem'}}>{mentor.expertise} · {mentor.online ? "Online" : "Offline"}</div>
+        </div>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          <button className="btn-ghost" disabled={!online} onClick={onStartAudioCall}>Audio Call</button>
+          <button className="btn-primary" disabled={!online} onClick={onStartVideoCall}>Video Call</button>
+          <button className="btn-ghost" onClick={onHangup}>End Call</button>
+        </div>
+      </div>
+      <div className="mentor-chat-window">
+        {chat.length ? chat.map((item, idx) => (
+          <div key={idx} className={`mentor-msg ${item.sender === "mentor" ? "mentor" : "user"}`}>
+            <span>{item.text}</span>
+            <div className="mentor-msg-time">{new Date(item.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+        )) : (
+          <div className="mentor-chat-empty">Select a mentor and start a conversation.</div>
+        )}
+      </div>
+      <div className="mentor-chat-input-wrap">
+        <input
+          className="chat-input"
+          value={message}
+          onChange={(e) => onMessageChange(e.target.value)}
+          placeholder={mentor.online ? "Ask your mentor a question..." : "Mentor is currently offline."}
+          disabled={!online}
+          onKeyDown={(e) => e.key === "Enter" && onSendMessage()}
+        />
+        <button className="btn-primary" disabled={!message.trim() || !online} onClick={onSendMessage}>Send</button>
+      </div>
+      {callStatus && (
+        <div className="mentor-call-status">
+          <strong>Call status:</strong> {callStatus.message}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function LandingPage({ onNavigate }) {
   return (
@@ -134,8 +339,10 @@ function AssessmentPage({ onComplete }) {
   );
 }
 
-function DashboardPage({ answers, onNavigate }) {
-  const sorted = [...CAREERS].sort((a,b)=>b.match-a.match);
+const STREAM_OPTIONS = ["PCM", "PCB", "Commerce", "Arts"];
+
+function DashboardPage({ selectedStream, streamCareers, onStreamChange, onNavigate }) {
+  const sorted = [...streamCareers].sort((a,b)=>b.match-a.match);
   const top = sorted[0];
 
   return (
@@ -145,15 +352,35 @@ function DashboardPage({ answers, onNavigate }) {
         Career Intelligence Report
       </h2>
       <p style={{color:"var(--muted)",fontSize:".9rem",marginBottom:8}}>
-        Based on your assessment, here are your top career matches ranked by compatibility.
+        Select your stream to view only relevant career paths.
       </p>
+      <div style={{maxWidth:360, marginBottom:20}}>
+        <label style={{display:"block", marginBottom:8, fontSize:".8rem", color:"var(--muted)", fontFamily:"var(--font-mono)"}}>
+          Academic Stream
+        </label>
+        <select className="filter-select" value={selectedStream} onChange={(e)=>onStreamChange(e.target.value)}>
+          <option value="">Select stream</option>
+          {STREAM_OPTIONS.map((stream)=><option key={stream} value={stream}>{stream}</option>)}
+        </select>
+      </div>
       <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:32}}>
-        {["Builder ðŸ”¨","Analytical ðŸ§ª","Risk-Taker âš¡","Self-Learner ðŸ“š"].map(t=>(
+        {[selectedStream ? `Stream: ${selectedStream}` : "Choose stream to start"].map(t=>(
           <span key={t} className="tag tag-purple" style={{padding:"6px 14px",fontSize:".8rem"}}>{t}</span>
         ))}
       </div>
+      {!selectedStream && (
+        <div className="panel-card" style={{marginBottom:20}}>
+          <p style={{color:"var(--muted)",fontSize:".9rem"}}>Pick one stream to see targeted career options.</p>
+        </div>
+      )}
+      {selectedStream && sorted.length === 0 && (
+        <div className="panel-card" style={{marginBottom:20}}>
+          <p style={{color:"var(--muted)",fontSize:".9rem"}}>No careers mapped for this stream yet.</p>
+        </div>
+      )}
+      {selectedStream && sorted.length > 0 && (
       <div className="dash-grid">
-        <div className="career-cards">
+        <div className="career-cards" key={selectedStream}>
           {sorted.map((c,i)=>(
             <div key={c.id} className={`career-card${i===0?" top":""} fade-in`}
               style={{animationDelay:`${i*0.07}s`}}
@@ -191,7 +418,7 @@ function DashboardPage({ answers, onNavigate }) {
             <div style={{fontFamily:"var(--font-display)",fontWeight:800,fontSize:"1.1rem"}}>{top.name}</div>
             <div style={{fontSize:".82rem",color:"var(--muted)",margin:"8px 0 16px",lineHeight:1.5}}>{top.desc}</div>
             <button className="btn-primary" style={{width:"100%",padding:"12px"}}
-              onClick={()=>onNavigate("roadmap","ai-ml")}>
+              onClick={()=>onNavigate("roadmap",top.id)}>
               View My Roadmap â†’
             </button>
           </div>
@@ -206,6 +433,7 @@ function DashboardPage({ answers, onNavigate }) {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -652,29 +880,405 @@ function CollegePage() {
 export default function App() {
   const [page, setPage] = useState("home");
   const [subData, setSubData] = useState(null);
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem("nexusai_auth_token") || "");
+  const [user, setUser] = useState(() => {
+    const raw = localStorage.getItem("nexusai_user");
+    return raw ? JSON.parse(raw) : null;
+  });
+  const [profile, setProfile] = useState(null);
   const [assessed, setAssessed] = useState(false);
+  const [selectedStream, setSelectedStream] = useState("");
+  const [assessmentAnswers, setAssessmentAnswers] = useState({});
+  const [streamCareers, setStreamCareers] = useState([]);
+  const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [mentors, setMentors] = useState([]);
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [mentorChat, setMentorChat] = useState([]);
+  const [mentorMessage, setMentorMessage] = useState("");
+  const [mentorOnline, setMentorOnline] = useState(false);
+  const [callStatus, setCallStatus] = useState(null);
+  const [mentorSocket, setMentorSocket] = useState(null);
 
-  const navigate = (p, data=null) => {
+  const navigate = (p, data = null) => {
     setPage(p);
-    if(data) setSubData(data);
-    window.scrollTo({top:0,behavior:"smooth"});
+    if (data) setSubData(data);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleAssessmentComplete = (answers) => {
+  const resetUserState = () => {
+    setSelectedStream("");
+    setAssessmentAnswers({});
+    setStreamCareers([]);
+    setSubData(null);
+    setProfile(null);
+    setAssessed(false);
+  };
+
+  const clearAuth = () => {
+    setAuthToken("");
+    setUser(null);
+    setAuthError("");
+    localStorage.removeItem("nexusai_auth_token");
+    localStorage.removeItem("nexusai_user");
+    localStorage.removeItem("nexusai_profile");
+    resetUserState();
+    setPage("home");
+  };
+
+  const saveProfileData = async (nextProfile) => {
+    setProfile(nextProfile);
+    localStorage.setItem("nexusai_profile", JSON.stringify(nextProfile));
+
+    if (!authToken) {
+      return;
+    }
+
+    const response = await apiRequest("/api/profile", {
+      method: "PUT",
+      body: JSON.stringify({ profile: nextProfile }),
+    }, authToken);
+
+    if (!response.ok) {
+      clearAuth();
+    }
+  };
+
+  const loadUserProfile = async () => {
+    if (!authToken) {
+      return;
+    }
+
+    const response = await apiRequest("/api/profile", {}, authToken);
+    if (!response.ok) {
+      clearAuth();
+      return;
+    }
+
+    const data = await response.json();
+    const profileData = data.profile || {};
+    setProfile(profileData);
+    setSelectedStream(profileData.selectedStream || "");
+    setAssessmentAnswers(profileData.assessmentAnswers || {});
+    localStorage.setItem("nexusai_profile", JSON.stringify(profileData));
+  };
+
+  const validateSession = async () => {
+    if (!authToken) {
+      resetUserState();
+      return;
+    }
+
+    const response = await apiRequest("/api/auth/me", {}, authToken);
+    if (!response.ok) {
+      clearAuth();
+      return;
+    }
+
+    const data = await response.json();
+    setUser(data.user);
+    localStorage.setItem("nexusai_user", JSON.stringify(data.user));
+    await loadUserProfile();
+  };
+
+  const fetchMentors = async () => {
+    if (!authToken) {
+      setMentors([]);
+      return;
+    }
+
+    try {
+      const response = await apiRequest("/api/mentors", {}, authToken);
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      setMentors(data.mentors || []);
+    } catch (err) {
+      console.error("Failed to load mentors", err);
+    }
+  };
+
+  const loadMentorChat = async (mentor) => {
+    if (!mentor || !authToken) {
+      setMentorChat([]);
+      return;
+    }
+
+    try {
+      const response = await apiRequest(`/api/mentors/${mentor.id}/chat`, {}, authToken);
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      setMentorChat(data.chat || []);
+      setMentorOnline(mentor.online);
+    } catch (err) {
+      console.error("Failed to load mentor chat", err);
+    }
+  };
+
+  const connectMentorSocket = () => {
+    if (!authToken) {
+      return;
+    }
+
+    const socket = io(API_BASE, {
+      auth: { token: authToken },
+      transports: ["websocket"],
+    });
+
+    socket.on("connect", () => {
+      if (selectedMentor) {
+        socket.emit("join-mentor-room", { mentorId: selectedMentor.id });
+      }
+    });
+
+    socket.on("mentor-message", (message) => {
+      setMentorChat((prev) => [...prev, message]);
+    });
+
+    socket.on("mentor-online", (status) => {
+      setMentors((prev) => prev.map((mentor) => (
+        mentor.id === status.id ? { ...mentor, online: status.online } : mentor
+      )));
+      if (selectedMentor?.id === status.id) {
+        setMentorOnline(status.online);
+      }
+    });
+
+    socket.on("mentor-call-status", (status) => {
+      setCallStatus(status);
+    });
+
+    socket.on("mentor-hangup", () => {
+      setCallStatus({ message: "Call ended" });
+    });
+
+    socket.on("disconnect", () => {
+      setCallStatus((prev) => prev ? { ...prev, message: "Disconnected from mentor service." } : prev);
+    });
+
+    setMentorSocket(socket);
+  };
+
+  useEffect(() => {
+    if (!authToken) {
+      if (mentorSocket) {
+        mentorSocket.disconnect();
+      }
+      setMentorSocket(null);
+      setMentors([]);
+      setSelectedMentor(null);
+      return;
+    }
+
+    connectMentorSocket();
+    fetchMentors();
+
+    return () => {
+      if (mentorSocket) {
+        mentorSocket.disconnect();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authToken]);
+
+  useEffect(() => {
+    if (mentorSocket && selectedMentor) {
+      mentorSocket.emit("join-mentor-room", { mentorId: selectedMentor.id });
+      loadMentorChat(selectedMentor);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mentorSocket, selectedMentor]);
+
+  useEffect(() => {
+    validateSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authToken]);
+
+  useEffect(() => {
+    if (!selectedStream) {
+      setStreamCareers([]);
+      return;
+    }
+    const nextCareers = CAREERS.filter((c) => (c.streams || []).includes(selectedStream));
+    setStreamCareers(nextCareers);
+  }, [selectedStream]);
+
+  const handleLogin = async (username, password) => {
+    setAuthError("");
+    setAuthLoading(true);
+    resetUserState();
+
+    if (!username.trim() || !password) {
+      setAuthError("Please enter both username and password.");
+      setAuthLoading(false);
+      return;
+    }
+
+    try {
+      const data = await fetchJson("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+
+      setAuthToken(data.token);
+      setUser(data.user);
+      localStorage.setItem("nexusai_auth_token", data.token);
+      localStorage.setItem("nexusai_user", JSON.stringify(data.user));
+      await loadUserProfile();
+      navigate("dashboard");
+    } catch (error) {
+      setAuthError(error?.message || "Login failed.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignup = async (name, username, password) => {
+    setAuthError("");
+    setAuthLoading(true);
+    resetUserState();
+
+    const trimmedName = String(name || "").trim();
+    const trimmedUsername = String(username || "").trim();
+
+    if (!trimmedName || !trimmedUsername || !password) {
+      setAuthError("Name, username, and password are required.");
+      setAuthLoading(false);
+      return;
+    }
+    if (trimmedUsername.length < 3) {
+      setAuthError("Username must be at least 3 characters.");
+      setAuthLoading(false);
+      return;
+    }
+    if (password.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
+      setAuthLoading(false);
+      return;
+    }
+
+    try {
+      const data = await fetchJson("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({ name: trimmedName, username: trimmedUsername, password }),
+      });
+
+      setAuthToken(data.token);
+      setUser(data.user);
+      localStorage.setItem("nexusai_auth_token", data.token);
+      localStorage.setItem("nexusai_user", JSON.stringify(data.user));
+      await loadUserProfile();
+      navigate("dashboard");
+    } catch (error) {
+      setAuthError(error?.message || "Signup failed.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleStreamChange = async (stream) => {
+    setSubData(null);
+    setSelectedStream(stream);
+
+    const nextProfile = {
+      ...(profile || {}),
+      selectedStream: stream,
+      assessmentAnswers,
+    };
+
+    await saveProfileData(nextProfile);
+  };
+
+  const handleAssessmentComplete = async (answers) => {
     setAssessed(true);
+    setAssessmentAnswers(answers);
+
+    const nextProfile = {
+      ...(profile || {}),
+      assessmentAnswers: answers,
+      selectedStream: selectedStream || (STREAM_OPTIONS.includes(answers?.[1]) ? answers[1] : ""),
+    };
+
+    if (!selectedStream && STREAM_OPTIONS.includes(answers?.[1])) {
+      setSelectedStream(answers[1]);
+    }
+
+    await saveProfileData(nextProfile);
     navigate("dashboard");
   };
 
+  const handleSelectMentor = async (mentor) => {
+    setSelectedMentor(mentor);
+    setMentorMessage("");
+    setCallStatus(null);
+
+    if (mentorSocket?.connected) {
+      mentorSocket.emit("join-mentor-room", { mentorId: mentor.id });
+    }
+
+    await loadMentorChat(mentor);
+  };
+
+  const sendMentorMessage = async () => {
+    if (!selectedMentor || !mentorMessage.trim()) {
+      return;
+    }
+
+    const message = mentorMessage.trim();
+    setMentorMessage("");
+
+    if (mentorSocket?.connected) {
+      mentorSocket.emit("mentor-message", { mentorId: selectedMentor.id, text: message });
+    } else {
+      try {
+        await apiRequest(`/api/mentors/${selectedMentor.id}/chat`, {
+          method: "POST",
+          body: JSON.stringify({ text: message }),
+        }, authToken);
+      } catch (err) {
+        console.error("Failed to send mentor message", err);
+      }
+    }
+
+    setMentorChat((prev) => [...prev, { sender: "user", text: message, timestamp: Date.now() }]);
+  };
+
+  const startAudioCall = () => {
+    if (!selectedMentor || !mentorSocket?.connected) {
+      return;
+    }
+    setCallStatus({ message: "Requesting audio call..." });
+    mentorSocket.emit("mentor-call-request", { mentorId: selectedMentor.id, type: "audio" });
+  };
+
+  const startVideoCall = () => {
+    if (!selectedMentor || !mentorSocket?.connected) {
+      return;
+    }
+    setCallStatus({ message: "Requesting video call..." });
+    mentorSocket.emit("mentor-call-request", { mentorId: selectedMentor.id, type: "video" });
+  };
+
+  const endMentorCall = () => {
+    if (mentorSocket?.connected && selectedMentor) {
+      mentorSocket.emit("mentor-hangup", { mentorId: selectedMentor.id });
+    }
+    setCallStatus({ message: "Call ended." });
+  };
+
   const NAV_ITEMS = [
-    {key:"home",label:"Home"},
-    {key:"assessment",label:"Assessment"},
-    {key:"dashboard",label:"Results"},
-    {key:"compare",label:"Compare"},
-    {key:"roadmap",label:"Roadmap"},
-    {key:"whatif",label:"What-If"},
-    {key:"trends",label:"Trends"},
-    {key:"journeys",label:"Journeys"},
-    {key:"college",label:"Colleges"},
+    { key: "home", label: "Home" },
+    { key: "assessment", label: "Assessment" },
+    { key: "dashboard", label: "Results" },
+    { key: "compare", label: "Compare" },
+    { key: "roadmap", label: "Roadmap" },
+    { key: "whatif", label: "What-If" },
+    { key: "trends", label: "Trends" },
+    { key: "journeys", label: "Journeys" },
+    { key: "college", label: "Colleges" },
   ];
 
   return (
@@ -682,24 +1286,50 @@ export default function App() {
         <nav>
           <div className="nav-logo">â¬¡ NexusAI</div>
           <div className="nav-links">
-            {NAV_ITEMS.map(n=>(
-              <button key={n.key} className={`nav-btn${page===n.key?" active":""}`}
-                onClick={()=>navigate(n.key)}>{n.label}</button>
+            {NAV_ITEMS.map((n) => (
+              <button key={n.key} className={`nav-btn${page===n.key?" active":""}`} onClick={()=>navigate(n.key)}>
+                {n.label}
+              </button>
             ))}
           </div>
-          <button className="nav-btn nav-cta" onClick={()=>navigate("chat")}>ðŸ’¬ AI Mentor</button>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            {user ? (
+              <>
+                <span style={{color:"var(--muted)",fontSize:".88rem",marginRight:8}}>
+                  Signed in as {user.name}
+                </span>
+                <button className="nav-btn nav-cta" onClick={clearAuth}>Logout</button>
+              </>
+            ) : (
+              <>
+                <button className="nav-btn" onClick={()=>navigate("login")}>Login</button>
+                <button className="nav-btn nav-cta" onClick={()=>navigate("signup")}>Sign Up</button>
+              </>
+            )}
+            <button className="nav-btn nav-cta" onClick={()=>navigate("mentor")}>ðŸ’¬ AI Mentor</button>
+          </div>
         </nav>
 
-        {page==="home" && <LandingPage onNavigate={navigate}/>}
-        {page==="assessment" && <AssessmentPage onComplete={handleAssessmentComplete}/>}
-        {page==="dashboard" && <DashboardPage answers={subData} onNavigate={navigate}/>}
-        {page==="compare" && <ComparisonPage/>}
-        {page==="roadmap" && <RoadmapPage careerId={subData||"ai-ml"}/>}
-        {page==="whatif" && <WhatIfPage/>}
-        {page==="chat" && <ChatPage/>}
-        {page==="trends" && <TrendsPage/>}
-        {page==="journeys" && <JourneysPage/>}
-        {page==="college" && <CollegePage/>}
+        {page==="home" && <LandingPage onNavigate={navigate} />}
+        {page==="login" && <LoginPage onLogin={handleLogin} onSwitchToSignup={()=>navigate("signup")} loading={authLoading} error={authError} />}
+        {page==="signup" && <SignupPage onSignup={handleSignup} onSwitchToLogin={()=>navigate("login")} loading={authLoading} error={authError} />}
+        {page==="assessment" && <AssessmentPage onComplete={handleAssessmentComplete} />}
+        {page==="dashboard" && (
+          <DashboardPage
+            selectedStream={selectedStream}
+            streamCareers={streamCareers}
+            onStreamChange={handleStreamChange}
+            onNavigate={navigate}
+            answers={assessmentAnswers}
+          />
+        )}
+        {page==="compare" && <ComparisonPage />}
+        {page==="roadmap" && <RoadmapPage careerId={subData || streamCareers[0]?.id || "ai-ml"} />}
+        {page==="whatif" && <WhatIfPage />}
+        {page==="chat" && <ChatPage />}
+        {page==="trends" && <TrendsPage />}
+        {page==="journeys" && <JourneysPage />}
+        {page==="college" && <CollegePage />}
       </div>
     </>
   );
