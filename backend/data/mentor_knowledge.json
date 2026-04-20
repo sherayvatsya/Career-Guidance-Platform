@@ -1,0 +1,366 @@
+[
+  {
+    "id": "career-ai-engineer",
+    "topic": "AI Engineer",
+    "tags": ["ai engineer", "machine learning", "career path", "ml ops"],
+    "question": "How do I become an AI engineer?",
+    "answer": "Build strong Python, statistics, and linear algebra fundamentals, then learn ML frameworks, model deployment, and MLOps. Start with 2 to 3 portfolio projects that solve real problems and deploy at least one to production."
+  },
+  {
+    "id": "career-data-scientist",
+    "topic": "Data Scientist",
+    "tags": ["data scientist", "analytics", "career path", "sql"],
+    "question": "How do I become a data scientist?",
+    "answer": "Master SQL, Python, data cleaning, experimentation, and storytelling with dashboards. Build projects that show business impact, not only model accuracy, and practice communicating tradeoffs to non-technical teams."
+  },
+  {
+    "id": "career-software-engineer",
+    "topic": "Software Engineer",
+    "tags": ["software engineer", "backend", "frontend", "system design"],
+    "question": "How do I start software engineering?",
+    "answer": "Choose one stack, ship small apps consistently, and learn testing, debugging, and version control deeply. Then grow into system design and architecture through larger projects with databases and APIs."
+  },
+  {
+    "id": "career-frontend",
+    "topic": "Frontend Engineer",
+    "tags": ["frontend", "react", "javascript", "ui"],
+    "question": "How can I become a frontend engineer?",
+    "answer": "Focus on HTML, CSS, JavaScript, and one framework like React while learning accessibility and performance fundamentals. Build polished responsive apps and explain your UX and state-management decisions in interviews."
+  },
+  {
+    "id": "career-backend",
+    "topic": "Backend Engineer",
+    "tags": ["backend", "api", "database", "node"],
+    "question": "How do I move into backend engineering?",
+    "answer": "Learn API design, relational databases, caching, authentication, and observability. Build services with clean error handling and tests, then deploy with CI/CD to show production readiness."
+  },
+  {
+    "id": "career-cybersecurity",
+    "topic": "Cybersecurity",
+    "tags": ["cybersecurity", "soc", "security analyst", "pentest"],
+    "question": "How do I start a cybersecurity career?",
+    "answer": "Build networking and operating system fundamentals, then learn common attacks, detection tools, and defensive controls. Begin with analyst-level skills in logs and incident triage before specializing."
+  },
+  {
+    "id": "career-product-manager",
+    "topic": "Product Manager",
+    "tags": ["product manager", "pm", "roadmap", "strategy"],
+    "question": "How do I switch to product management?",
+    "answer": "Develop product sense, problem framing, prioritization, and stakeholder communication. Show impact by leading a feature from discovery to launch with clear metrics and post-launch learnings."
+  },
+  {
+    "id": "career-ux",
+    "topic": "UX Designer",
+    "tags": ["ux", "ui", "product design", "figma"],
+    "question": "How do I become a UX designer?",
+    "answer": "Learn user research, information architecture, interaction design, and prototyping in Figma. Build case studies that show your process, decisions, and measurable outcomes instead of only final screens."
+  },
+  {
+    "id": "skills-python",
+    "topic": "Python",
+    "tags": ["python", "beginner", "programming"],
+    "question": "How should I learn Python quickly?",
+    "answer": "Start with control flow, data structures, functions, and debugging, then solve practical automation and data tasks. Practice daily with small projects and code reviews instead of only passive course watching."
+  },
+  {
+    "id": "skills-sql",
+    "topic": "SQL",
+    "tags": ["sql", "database", "analytics", "joins"],
+    "question": "How do I get good at SQL?",
+    "answer": "Master joins, aggregations, window functions, CTEs, and query optimization with real datasets. Write explanations for each query to build both technical skill and interview communication."
+  },
+  {
+    "id": "skills-dsa",
+    "topic": "Data Structures and Algorithms",
+    "tags": ["dsa", "leetcode", "interview", "algorithms"],
+    "question": "How do I prepare DSA for interviews?",
+    "answer": "Study patterns, not random problems, and track mistakes by category. Practice timed sessions and always explain tradeoffs in time and space complexity out loud."
+  },
+  {
+    "id": "skills-system-design",
+    "topic": "System Design",
+    "tags": ["system design", "scalability", "architecture", "distributed systems"],
+    "question": "How do I study system design?",
+    "answer": "Learn core building blocks like load balancers, caches, queues, and databases before full interview questions. Structure answers as requirements, high-level design, bottlenecks, and scaling decisions."
+  },
+  {
+    "id": "skills-cloud-fundamentals",
+    "topic": "Cloud Fundamentals",
+    "tags": ["cloud", "aws", "networking", "security"],
+    "question": "What cloud fundamentals should beginners learn first?",
+    "answer": "Start with IAM, VPC networking basics, compute services, storage tiers, and monitoring. Build small architectures and document security and cost decisions to strengthen real-world readiness."
+  },
+  {
+    "id": "learning-90-days",
+    "topic": "90 Day Learning Plan",
+    "tags": ["plan", "learning", "roadmap", "beginner"],
+    "question": "How do I build a 90-day roadmap?",
+    "answer": "Split 90 days into fundamentals, projects, and interview prep with weekly outcomes. Measure progress by artifacts shipped, not hours spent, and adjust every two weeks based on gaps."
+  },
+  {
+    "id": "learning-project-based",
+    "topic": "Project Based Learning",
+    "tags": ["projects", "portfolio", "learning by doing"],
+    "question": "Why is project-based learning important?",
+    "answer": "Projects force you to integrate skills, handle ambiguity, and debug real problems. They also provide proof of ability for recruiters and interviewers beyond certificates."
+  },
+  {
+    "id": "resume-impact",
+    "topic": "Resume Impact Bullets",
+    "tags": ["resume", "impact", "bullet points", "job application"],
+    "question": "How should I write strong resume bullets?",
+    "answer": "Use action plus context plus measurable impact, such as performance gains, revenue effect, or time saved. Prioritize outcomes and ownership rather than listing tools without results."
+  },
+  {
+    "id": "resume-ats",
+    "topic": "ATS Optimization",
+    "tags": ["ats", "resume keywords", "screening"],
+    "question": "How do I make my resume ATS friendly?",
+    "answer": "Mirror the job description language for must-have skills and keep formatting clean with standard headings. Avoid graphics-heavy templates that break parsing and hurt keyword matching."
+  },
+  {
+    "id": "linkedin-profile",
+    "topic": "LinkedIn Profile",
+    "tags": ["linkedin", "branding", "job search", "networking"],
+    "question": "How can I improve my LinkedIn profile?",
+    "answer": "Write a headline that states role plus niche plus value, then add proof through featured projects and results. Post thoughtful learning updates regularly to increase visibility with recruiters."
+  },
+  {
+    "id": "portfolio-website",
+    "topic": "Portfolio Website",
+    "tags": ["portfolio", "website", "projects", "showcase"],
+    "question": "What should a strong portfolio include?",
+    "answer": "Include 3 to 5 high-quality projects with problem statement, approach, stack, and measurable outcomes. Add live demo or screenshots, code links, and key lessons learned for each project."
+  },
+  {
+    "id": "interview-behavioral",
+    "topic": "Behavioral Interviews",
+    "tags": ["behavioral", "star method", "interview"],
+    "question": "How do I answer behavioral interview questions?",
+    "answer": "Use STAR structure and highlight your specific actions, judgment, and outcome. Prepare stories around conflict, ownership, failure recovery, and cross-team collaboration."
+  },
+  {
+    "id": "interview-technical",
+    "topic": "Technical Interviews",
+    "tags": ["technical interview", "coding interview", "problem solving"],
+    "question": "How do I perform better in technical interviews?",
+    "answer": "Clarify requirements first, think aloud, and validate with examples before coding. After solving, discuss edge cases, complexity, and possible optimizations to show engineering maturity."
+  },
+  {
+    "id": "interview-project-discussion",
+    "topic": "Project Discussion",
+    "tags": ["project discussion", "interview projects", "storytelling"],
+    "question": "How should I present projects in interviews?",
+    "answer": "Frame each project as problem, constraints, decisions, and impact, then explain one hard challenge deeply. Be ready to justify tradeoffs and what you would improve in version two."
+  },
+  {
+    "id": "salary-negotiation",
+    "topic": "Salary Negotiation",
+    "tags": ["salary", "negotiation", "offer"],
+    "question": "How should I negotiate salary?",
+    "answer": "Anchor on market range and role value, then negotiate total compensation, not only base pay. Use evidence from your impact and remain collaborative to keep the conversation constructive."
+  },
+  {
+    "id": "offer-comparison",
+    "topic": "Offer Comparison",
+    "tags": ["offer", "compare offers", "career decision"],
+    "question": "How do I choose between two job offers?",
+    "answer": "Compare role scope, manager quality, learning curve, team health, compensation, and future mobility. Choose the offer that maximizes long-term growth, not only immediate salary."
+  },
+  {
+    "id": "job-search-strategy",
+    "topic": "Job Search Strategy",
+    "tags": ["job search", "applications", "strategy"],
+    "question": "What is an effective job search strategy?",
+    "answer": "Apply with role-specific resumes, maintain a weekly pipeline target, and balance referrals with direct applications. Track outcomes by stage to identify whether resume, interview, or targeting is the bottleneck."
+  },
+  {
+    "id": "referrals",
+    "topic": "Referrals",
+    "tags": ["referral", "networking", "job hunt"],
+    "question": "How do I ask for referrals professionally?",
+    "answer": "Send a short personalized message showing fit for the specific role and attach resume plus project links. Make it easy for the referrer by providing a 3-line summary they can forward."
+  },
+  {
+    "id": "internships",
+    "topic": "Internships",
+    "tags": ["internship", "student", "early career"],
+    "question": "How do I land internships?",
+    "answer": "Start early, apply consistently, and showcase focused projects that align with internship responsibilities. Networking with alumni and targeted outreach often improves response rate."
+  },
+  {
+    "id": "career-switch",
+    "topic": "Career Switch",
+    "tags": ["career change", "transition", "switch domains"],
+    "question": "How can I switch careers into tech?",
+    "answer": "Map transferable skills first, then build missing technical depth through focused learning and applied projects. Position your previous experience as an advantage, especially in domain knowledge and communication."
+  },
+  {
+    "id": "non-cs-tech",
+    "topic": "Non-CS to Tech",
+    "tags": ["non cs", "transition", "beginner"],
+    "question": "Can non-CS students get tech jobs?",
+    "answer": "Absolutely, if they demonstrate practical skills and project evidence aligned to target roles. Strong fundamentals, consistent practice, and interview preparation matter more than degree label alone."
+  },
+  {
+    "id": "ai-ml-beginner",
+    "topic": "AI/ML for Beginners",
+    "tags": ["ai", "ml", "beginner", "roadmap"],
+    "question": "How should beginners start AI/ML?",
+    "answer": "Begin with Python and core math, then learn supervised learning, model evaluation, and feature engineering. Build simple projects first and gradually add deep learning and deployment skills."
+  },
+  {
+    "id": "genai-roadmap",
+    "topic": "Generative AI Roadmap",
+    "tags": ["genai", "llm", "prompt engineering", "rag"],
+    "question": "How do I enter Generative AI roles?",
+    "answer": "Learn LLM fundamentals, prompt design, embeddings, retrieval-augmented generation, and evaluation. Build real GenAI applications with guardrails, cost controls, and feedback loops."
+  },
+  {
+    "id": "rag",
+    "topic": "RAG Systems",
+    "tags": ["rag", "retrieval", "vector database", "llm apps"],
+    "question": "What is RAG and why is it useful?",
+    "answer": "RAG grounds model responses in external knowledge, improving factual reliability and relevance. Good RAG systems depend on clean chunking, retrieval quality, and answer evaluation."
+  },
+  {
+    "id": "prompt-engineering",
+    "topic": "Prompt Engineering",
+    "tags": ["prompt", "llm", "ai assistant"],
+    "question": "How can I write better prompts?",
+    "answer": "Define role, context, constraints, and expected output format clearly. Iteratively refine prompts using test cases and compare outputs against objective quality criteria."
+  },
+  {
+    "id": "certifications",
+    "topic": "Certifications",
+    "tags": ["certification", "course", "career value"],
+    "question": "Are certifications enough to get hired?",
+    "answer": "Certifications can help credibility, but hiring decisions usually depend on demonstrated skills and project impact. Use certificates as support, not as a substitute for practical work."
+  },
+  {
+    "id": "masters-vs-job",
+    "topic": "Masters vs Job",
+    "tags": ["masters", "higher studies", "job decision"],
+    "question": "Should I do a masters or start working?",
+    "answer": "Choose masters if you need specialization, research exposure, or geographic mobility goals. Choose work first if you need practical experience, financial stability, and clearer career direction."
+  },
+  {
+    "id": "freelancing",
+    "topic": "Freelancing",
+    "tags": ["freelance", "client work", "income"],
+    "question": "How can beginners start freelancing?",
+    "answer": "Start with a narrow service offering and a few strong samples relevant to target clients. Build trust through clear communication, scoped milestones, and dependable delivery."
+  },
+  {
+    "id": "remote-work",
+    "topic": "Remote Work",
+    "tags": ["remote", "distributed teams", "communication"],
+    "question": "How do I prepare for remote roles?",
+    "answer": "Strengthen async communication, documentation habits, and self-management routines. Companies value remote candidates who provide clear updates and dependable ownership."
+  },
+  {
+    "id": "communication-tech",
+    "topic": "Communication Skills",
+    "tags": ["communication", "soft skills", "career"],
+    "question": "Why are communication skills important in tech?",
+    "answer": "Strong communication improves teamwork, execution speed, and trust across functions. Engineers with clear writing and speaking often progress faster into high-impact roles."
+  },
+  {
+    "id": "open-source",
+    "topic": "Open Source Contributions",
+    "tags": ["open source", "contribution", "collaboration"],
+    "question": "Do open-source contributions help with jobs?",
+    "answer": "Yes, they show collaboration, code review readiness, and ability to work in real codebases. Start with documentation or small bug fixes, then grow into feature-level contributions."
+  },
+  {
+    "id": "job-market-trends",
+    "topic": "Job Market Trends",
+    "tags": ["job market", "trends", "future skills"],
+    "question": "Which tech skills have strong demand?",
+    "answer": "AI, data engineering, cloud platforms, cybersecurity, and full-stack development remain consistently strong areas. Pair technical depth with domain knowledge and communication for better resilience."
+  },
+  {
+    "id": "ds-salary-india",
+    "topic": "Data Scientist Salary India",
+    "tags": ["salary", "data scientist", "india"],
+    "question": "How much does a data scientist earn in India?",
+    "answer": "Entry-level data scientist salaries in India often land around 6 to 12 LPA, with higher ranges at top firms. Actual pay varies by city, company tier, and project depth."
+  },
+  {
+    "id": "swe-salary-india",
+    "topic": "Software Engineer Salary India",
+    "tags": ["salary", "software engineer", "india"],
+    "question": "What is software engineer salary in India?",
+    "answer": "Many entry-level software engineering roles in India range roughly from 5 to 12 LPA, while top-tier product companies can be significantly higher. Skills, internships, and interview performance strongly affect outcomes."
+  },
+  {
+    "id": "ml-salary-global",
+    "topic": "ML Engineer Salary Global",
+    "tags": ["ml engineer", "salary", "global"],
+    "question": "How much does an ML engineer earn globally?",
+    "answer": "In major markets, ML engineer pay is often above general software averages due to specialized demand. Compensation depends heavily on experience, company size, and whether the role includes production ownership."
+  },
+  {
+    "id": "interview-anxiety",
+    "topic": "Interview Anxiety",
+    "tags": ["anxiety", "confidence", "interview prep"],
+    "question": "How do I reduce interview anxiety?",
+    "answer": "Simulate real interviews regularly and rehearse introductions and problem framing. Confidence improves when uncertainty is replaced by repeatable preparation routines."
+  },
+  {
+    "id": "mock-interviews",
+    "topic": "Mock Interviews",
+    "tags": ["mock interview", "practice", "feedback"],
+    "question": "How useful are mock interviews?",
+    "answer": "Mock interviews expose communication gaps and timing issues that self-study misses. Use feedback loops to improve specific weaknesses each week."
+  },
+  {
+    "id": "placement-plan",
+    "topic": "Campus Placement Plan",
+    "tags": ["placements", "college", "job prep"],
+    "question": "What is a good placement preparation plan?",
+    "answer": "Combine DSA practice, one major project, aptitude prep, and mock interviews in a weekly schedule. Start early enough to revise core subjects and company-specific patterns."
+  },
+  {
+    "id": "cs-core",
+    "topic": "Core CS Subjects",
+    "tags": ["os", "dbms", "cn", "oops"],
+    "question": "Which CS subjects are important for interviews?",
+    "answer": "Operating systems, DBMS, networking, and OOP are frequently tested in interviews. Learn practical understanding and common real-world scenarios, not only definitions."
+  },
+  {
+    "id": "role-selection",
+    "topic": "Choosing Role",
+    "tags": ["choose career", "role fit", "interests"],
+    "question": "How do I choose the right tech role?",
+    "answer": "Match role choice to your strongest interest signals, natural strengths, and preferred work style. Test roles through small projects before making long-term commitments."
+  },
+  {
+    "id": "career-growth-1to3",
+    "topic": "Growth from 1 to 3 Years",
+    "tags": ["career growth", "promotion", "mid level"],
+    "question": "How do I grow quickly in first three years?",
+    "answer": "Deliver reliable execution first, then expand scope by owning ambiguous problems and improving team processes. Document impact and communicate achievements before review cycles."
+  },
+  {
+    "id": "promotion-readiness",
+    "topic": "Promotion Readiness",
+    "tags": ["promotion", "career progression", "performance review"],
+    "question": "How do I prepare for promotion?",
+    "answer": "Map your work to the next-level expectations and gather evidence of impact across scope, complexity, and influence. Discuss growth plan with your manager well before review cycles."
+  },
+  {
+    "id": "layoff-recovery",
+    "topic": "Layoff Recovery",
+    "tags": ["layoff", "job search", "career recovery"],
+    "question": "What should I do after a layoff?",
+    "answer": "Stabilize finances, update resume and LinkedIn quickly, and activate your network with a clear role target. Keep a weekly application and interview rhythm to rebuild momentum."
+  },
+  {
+    "id": "general-unknown",
+    "topic": "Unknown Question Handling",
+    "tags": ["unknown", "broad question", "mentor support"],
+    "question": "What if I ask something outside the database?",
+    "answer": "I will still provide practical guidance using general career strategy and problem-solving frameworks. If you share your context and goals, I can give a tailored step-by-step answer."
+  }
+]

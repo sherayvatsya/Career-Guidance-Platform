@@ -1,0 +1,95 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "sheray",
+      "name": "Sheray Vatsya",
+      "passwordHash": "$2a$10$kvOlEvBe3SaNtyhek1iLJefYhoFFsSjFWUkpOXznkENY.kJ/3TS/a",
+      "createdAt": "2026-04-20T10:26:13.613Z",
+      "updatedAt": "2026-04-20T11:35:55.729Z"
+    }
+  ],
+  "profiles": {
+    "1": {
+      "data": {
+        "assessed": false,
+        "assessmentAnswers": {},
+        "assessedAt": null,
+        "subData": "devops",
+        "compareSelected": [
+          "ai-ml",
+          "fullstack",
+          "ux-design"
+        ],
+        "whatIfPrefs": {
+          "salaryW": 97,
+          "codingW": 60,
+          "remoteW": 60,
+          "creativityW": 62
+        },
+        "collegeFilters": {
+          "type": "all",
+          "budget": "all"
+        },
+        "chatMessages": [
+          {
+            "role": "ai",
+            "text": "👋 Hey! I'm **NexusAI**, your personal career mentor. I can help with career choices, learning roadmaps, interview prep, salary negotiation, skill gaps — anything career-related. What's on your mind?",
+            "time": "Just now"
+          },
+          {
+            "role": "user",
+            "text": "give me roadmap of web development",
+            "time": "16:32"
+          },
+          {
+            "role": "ai",
+            "text": "I hit an issue: ANTHROPIC_API_KEY is missing on backend.",
+            "time": "16:32"
+          },
+          {
+            "role": "user",
+            "text": "give me roadmap of web development",
+            "time": "16:39"
+          },
+          {
+            "role": "ai",
+            "text": "I hit an issue: ANTHROPIC_API_KEY is missing on backend.",
+            "time": "16:39"
+          },
+          {
+            "role": "user",
+            "text": "give me roadmap of web development",
+            "time": "16:53"
+          },
+          {
+            "role": "ai",
+            "text": "Great goal. Web development roadmap: 1) Learn HTML, CSS, and JavaScript fundamentals. 2) Build 3 small projects (landing page, responsive portfolio, and a todo app). 3) Learn React and API integration. 4) Learn backend basics with Node.js/Express and a database like PostgreSQL or MongoDB. 5) Deploy 2 full-stack projects and prepare for interviews with DSA + system design basics.",
+            "time": "16:53"
+          },
+          {
+            "role": "user",
+            "text": "give me roadmap of ai ml",
+            "time": "16:53"
+          },
+          {
+            "role": "ai",
+            "text": "I can still help without the external AI key. Share your target role, current skill level, and timeline, and I will give you a step-by-step roadmap.",
+            "time": "16:53"
+          },
+          {
+            "role": "user",
+            "text": "compare web development and al ml engineer",
+            "time": "16:54"
+          },
+          {
+            "role": "ai",
+            "text": "Great goal. Web development roadmap: 1) Learn HTML, CSS, and JavaScript fundamentals. 2) Build 3 small projects (landing page, responsive portfolio, and a todo app). 3) Learn React and API integration. 4) Learn backend basics with Node.js/Express and a database like PostgreSQL or MongoDB. 5) Deploy 2 full-stack projects and prepare for interviews with DSA + system design basics.",
+            "time": "16:54"
+          }
+        ]
+      },
+      "updatedAt": "2026-04-20T11:35:55.729Z"
+    }
+  }
+}

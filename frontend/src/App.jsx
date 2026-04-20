@@ -399,8 +399,9 @@ function ChatPage() {
       history.push({ role:"user", content:msg });
       const reply = await askClaude(history);
       setMessages(m=>[...m,{ role:"ai", text:reply, time:now() }]);
-    } catch {
-      setMessages(m=>[...m,{ role:"ai", text:"Connection issue. Please try again.", time:now() }]);
+    } catch (error) {
+      const msg = error?.message ? `I hit an issue: ${error.message}` : "Connection issue. Please try again.";
+      setMessages(m=>[...m,{ role:"ai", text:msg, time:now() }]);
     }
     setLoading(false);
   };
@@ -418,7 +419,7 @@ function ChatPage() {
         Chat with NexusAI
       </h2>
       <p style={{color:"var(--muted)",fontSize:".9rem",marginBottom:20}}>
-        Powered by Claude â€” your always-on, judgment-free career mentor.
+        Powered by NexusAI mentor engine (Claude + local knowledge base).
       </p>
       <div className="quick-prompts">
         {QUICK.map(q=>(

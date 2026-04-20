@@ -14,5 +14,10 @@
 2. Backend
    - `cd backend`
    - `npm install`
-   - Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`
+   - Optional: copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY` for Claude-powered responses
    - `npm run dev`
+
+## AI Mentor data
+
+- AI Mentor now has a built-in local knowledge base at `backend/data/mentor_knowledge.json`.
+- If `ANTHROPIC_API_KEY` is missing or the Claude API fails, chat automatically falls back to this local database.
